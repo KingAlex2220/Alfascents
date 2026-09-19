@@ -12,191 +12,23 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # ==========================================
-# MASTER FRAGRANCES DICTIONARY WITH CUSTOM BADGES
+# MASTER FRAGRANCES DICTIONARY (EMPTY FOR NEW COLLECTION)
 # ==========================================
 fragrances = {
-    "108n": {
-        "name": "Flawless 108N Blend",
-        "impression_of": "Marc Jacobs - Perfect",
-        "gender": "Women",
-        "badge_primary": "Customer Favorite",
-        "badge_secondary": "Self-Love Blend",
-        "scent_profile": {
-            "top_notes": ["Rhubarb", "Daffodil"],
-            "heart_notes": ["Almond Milk"],
-            "base_notes": ["Cashmeran", "Cedarwood"],
-        },
-        "description": "A comforting floral fragrance celebrating self-love, opening with juicy rhubarb and bright daffodil over a creamy almond milk heart and smooth cashmeran base.",
-    },
-    "49e": {
-        "name": "Honey Nectar 49E Blend",
-        "impression_of": "DKNY - Nectar Love",
-        "gender": "Women",
-        "badge_primary": "Gourmand Pick",
-        "badge_secondary": "Solar Warmth",
-        "scent_profile": {
-            "top_notes": ["Solar Notes", "Nectarine", "Yellow Freesia", "Mandarin Orange"],
-            "heart_notes": ["Honeycomb", "Jasmine", "Lily-of-the-Valley"],
-            "base_notes": ["Beeswax", "Vanilla", "Cedarwood", "Musk", "Neroli"],
-        },
-        "description": "An intoxicating floral gourmand featuring warm solar fruit accords and wild honeycombs balanced by sweet vanilla and rich beeswax.",
-    },
-    "32a": {
-        "name": "Monarch Creed 32A Blend",
-        "impression_of": "Creed - Aventus",
-        "gender": "Men",
-        "badge_primary": "Top Seller",
-        "badge_secondary": "Masterpiece",
-        "scent_profile": {
-            "top_notes": ["Pineapple", "Bergamot", "Blackcurrant", "Apple"],
-            "heart_notes": ["Birch", "Patchouli", "Moroccan Jasmine", "Rose"],
-            "base_notes": ["Musk", "Oakmoss", "Ambergris", "Vanille"],
-        },
-        "description": "A legendary chypre fruity blend opening with fresh pineapple and crisp apple, layered over smoky birch wood, oakmoss, and rich ambergris.",
-    },
-    "128d": {
-        "name": "Sweets 128D Blend",
-        "impression_of": "Prada - Candy",
-        "gender": "Women",
-        "badge_primary": "Sweet Indulgence",
-        "badge_secondary": "Caramel Rich",
-        "scent_profile": {
-            "top_notes": ["Caramel"],
-            "heart_notes": ["Powdery Notes", "Musk"],
-            "base_notes": ["Benzoin", "Vanilla"],
-        },
-        "description": "A modern gourmand explosion combining rich, buttery caramel with silky powdery musks and warm oriental benzoin resin.",
-    },
-    "21i": {
-        "name": "Downtown 21I Blend",
-        "impression_of": "Bond No. 9 - Lafayette Street",
-        "gender": "Unisex",
-        "badge_primary": "Urban Luxury",
-        "badge_secondary": "Smooth Fougere",
-        "scent_profile": {
-            "top_notes": ["Bergamot", "Coriander", "Fresh Floral Notes"],
-            "heart_notes": ["Ambrosia", "Apple", "Vanilla"],
-            "base_notes": ["Woody Notes", "Tonka Bean", "Amber"],
-        },
-        "description": "An ultra-smooth oriental fougère blending sweet crisp apple and rich vanilla with warm amber and sophisticated urban woods.",
-    },
-    "25e": {
-        "name": "Manhattan Rose 25E Blend",
-        "impression_of": "Bond No. 9 - Nolita",
-        "gender": "Women",
-        "badge_primary": "Chic & Vibrant",
-        "badge_secondary": "City Rose",
-        "scent_profile": {
-            "top_notes": ["Tangerine", "Freesia"],
-            "heart_notes": ["Rose", "Jasmine Sambac", "Lily"],
-            "base_notes": ["Soft Musk", "Amber", "Sandalwood"],
-        },
-        "description": "An sparkling floral scent starring romantic city roses and fresh tangerine, set against a background of warm amber and creamy sandalwood.",
-    },
-    "40e": {
-        "name": "Romance 40E Blend",
-        "impression_of": "Christian Dior - Miss Dior Blooming Bouquet",
-        "gender": "Women",
-        "badge_primary": "Timeless Elegance",
-        "badge_secondary": "Floral Bouquet",
-        "scent_profile": {
-            "top_notes": ["Sicilian Mandarin"],
-            "heart_notes": ["Pink Peony", "Damask Rose", "Apricot", "Peach"],
-            "base_notes": ["White Musk"],
-        },
-        "description": "An elegant floral composition that feels like a dress embroidered with thousands of flowers, led by soft peony, damask rose, and velvety white musk.",
-    },
-    "26b": {
-        "name": "Blue Ocean 26B Blend",
-        "impression_of": "Bvlgari - Aqva Pour Homme",
-        "gender": "Men",
-        "badge_primary": "Aquatic Fresh",
-        "badge_secondary": "Deep Sea Breeze",
-        "scent_profile": {
-            "top_notes": ["Mandarin Orange", "Orange", "Petitgrain"],
-            "heart_notes": ["Seaweed (Posidonia)", "Lavender", "Cotton Flower"],
-            "base_notes": ["Virginia Cedar", "Woody Notes", "Amber", "Clary Sage"],
-        },
-        "description": "A crisp aquatic scent reminiscent of deep sea breezes, fusing fresh citrus fruits with ocean minerals, clary sage, and rich cedar.",
-    },
-    "70e": {
-        "name": "Rebel 70E Blend",
-        "impression_of": "Gucci - Gucci Guilty Pour Homme",
-        "gender": "Men",
-        "badge_primary": "Bold & Aromatic",
-        "badge_secondary": "Signature Edge",
-        "scent_profile": {
-            "top_notes": ["Lavender", "Amalfi Lemon"],
-            "heart_notes": ["African Orange Flower"],
-            "base_notes": ["Virginia Cedar", "Patchouli", "Vanilla"],
-        },
-        "description": "An aromatic fougère that provokes with fresh French lavender and zesty lemon before settling into warm cedarwood and earthy patchouli.",
-    },
-    "129g": {
-        "name": "Victorious 129G Blend",
-        "impression_of": "Paco Rabanne - Invictus",
-        "gender": "Men",
-        "badge_primary": "Power & Energy",
-        "badge_secondary": "Triumphant",
-        "scent_profile": {
-            "top_notes": ["Sea Notes", "Grapefruit", "Mandarin Orange"],
-            "heart_notes": ["Bay Leaf", "Jasmine"],
-            "base_notes": ["Ambergris", "Guaiac Wood", "Oakmoss", "Patchouli"],
-        },
-        "description": "An fresh woody scent representing victory, pairing invigorating marine sea notes and grapefruit with aromatic bay leaf and heavy ambergris.",
-    },
-    "33a": {
-        "name": "Savage Spirit 33A Blend",
-        "impression_of": "Dior - Sauvage",
-        "gender": "Men",
-        "badge_primary": "Iconic Powerhouse",
-        "badge_secondary": "Raw Freshness",
-        "scent_profile": {
-            "top_notes": ["Calabrian Bergamot", "Pepper"],
-            "heart_notes": ["Sichuan Pepper", "Lavender", "Pink Pepper", "Vetiver", "Patchouli", "Geranium", "Elemi"],
-            "base_notes": ["Ambroxan", "Cedar", "Labdanum"],
-        },
-        "description": "An radically fresh raw composition bursting with radiant Calabrian bergamot and spicy Sichuan pepper, anchored by a powerful woody ambroxan trail.",
-    },
-    "106a": {
-        "name": "Rouge 540 106A Blend",
-        "impression_of": "Maison Francis Kurkdjian - Baccarat Rouge 540",
-        "gender": "Unisex",
-        "badge_primary": "Masterpiece",
-        "badge_secondary": "Amber Alchemy",
-        "scent_profile": {
-            "top_notes": ["Saffron", "Jasmine"],
-            "heart_notes": ["Amberwood", "Ambergris"],
-            "base_notes": ["Fir Resin", "Cedarwood"],
-        },
-        "description": "An opulent, highly modern signature scent weaving breezy jasmine and radiant saffron with warm mineral ambergris and freshly cut cedar wood.",
-    },
-    "34d": {
-        "name": "Good Girl 34D blend",
-        "impression_of": "Carolina Herrera - Good Girl",
-        "gender": "Women",
-        "badge_primary": "Daring & Seductive",
-        "badge_secondary": "Midnight Gourmand",
-        "scent_profile": {
-            "top_notes": ["Almond", "Coffee", "Bergamot", "Lemon"],
-            "heart_notes": ["Tuberose", "Jasmine Sambac", "Orange Blossom", "Orris", "Bulgarian Rose"],
-            "base_notes": ["Tonka Bean", "Cacao", "Vanilla", "Praline", "Sandalwood", "Amber", "Musk"],
-        },
-        "description": "An daring gourmand floral contrasting sweet, luminous tuberose and jasmine against rich, dark notes of roasted tonka bean, cacao, and espresso.",
-    },
-    "25k": {
-        "name": "Dubai Nights 25k Blend",
-        "impression_of": "Bond No. 9 - Dubai Indigo",
-        "gender": "Unisex",
-        "badge_primary": "Exotic Opulence",
-        "badge_secondary": "Oud Royale",
-        "scent_profile": {
-            "top_notes": ["Lychee", "Peach", "Bergamot"],
-            "heart_notes": ["Orange Blossom", "Jasmine", "Peony"],
-            "base_notes": ["White Musk", "Amber", "Agarwood (Oud)", "Oakmoss"],
-        },
-        "description": "A luxurious Amber Floral fragrance blending bright tropical fruits with rich florals, grounded by a warm, opulent base of oud and amber.",
-    },
+    # Add your new fragrances and scent profiles here using the format:
+    # "unique_id": {
+    #     "name": "Fragrance Name",
+    #     "impression_of": "Brand - Scent Name",
+    #     "gender": "Men / Women / Unisex",
+    #     "badge_primary": "Primary Badge",
+    #     "badge_secondary": "Secondary Badge",
+    #     "scent_profile": {
+    #         "top_notes": ["Note 1", "Note 2"],
+    #         "heart_notes": ["Note 1", "Note 2"],
+    #         "base_notes": ["Note 1", "Note 2"],
+    #     },
+    #     "description": "Fragrance description here.",
+    # },
 }
 
 # ==========================================
@@ -1012,58 +844,61 @@ if selected_nav == "✨ Signature Blends":
                 on_click=switch_to_checkout_tab
             )
 
-    cols = st.columns(2)
-    for idx, item in enumerate(filtered_catalog):
-        col = cols[idx % 2]
-        stock_level = (
-            inventory_df.loc[item["id"], "stock_level"]
-            if item["id"] in inventory_df.index
-            else 5
-        )
+    if not filtered_catalog:
+        st.info("✨ Our new Master Signature Collection is coming soon! You can still browse or request custom scents in the 📦 Full Inventory tab.")
+    else:
+        cols = st.columns(2)
+        for idx, item in enumerate(filtered_catalog):
+            col = cols[idx % 2]
+            stock_level = (
+                inventory_df.loc[item["id"], "stock_level"]
+                if item["id"] in inventory_df.index
+                else 5
+            )
 
-        with col:
-            with st.container():
-                st.markdown('<div class="luxury-card">', unsafe_allow_html=True)
-                
-                badge_col1, badge_col2 = st.columns([1, 1])
-                with badge_col1:
-                    st.markdown(f'<span class="badge-signature">{item.get("badge_primary", "Signature")}</span>', unsafe_allow_html=True)
-                with badge_col2:
-                    st.markdown(f'<span class="badge-offer">{item.get("badge_secondary", "Special Offer")}</span>', unsafe_allow_html=True)
+            with col:
+                with st.container():
+                    st.markdown('<div class="luxury-card">', unsafe_allow_html=True)
+                    
+                    badge_col1, badge_col2 = st.columns([1, 1])
+                    with badge_col1:
+                        st.markdown(f'<span class="badge-signature">{item.get("badge_primary", "Signature")}</span>', unsafe_allow_html=True)
+                    with badge_col2:
+                        st.markdown(f'<span class="badge-offer">{item.get("badge_secondary", "Special Offer")}</span>', unsafe_allow_html=True)
 
-                st.markdown(f"### {item['name']}")
-                st.caption(f"**{item['gender']}'s** • {item['category']}")
-                
-                st.markdown('<div class="luxury-impression-stamp"><span>✨ Alfa Scents Master Impression • Artisanal Craft Blend ✨</span></div>', unsafe_allow_html=True)
+                    st.markdown(f"### {item['name']}")
+                    st.caption(f"**{item['gender']}'s** • {item['category']}")
+                    
+                    st.markdown('<div class="luxury-impression-stamp"><span>✨ Alfa Scents Master Impression • Artisanal Craft Blend ✨</span></div>', unsafe_allow_html=True)
 
-                st.write(f"*{item['notes']}*")
-                
-                if item.get("scent_profile"):
-                    sp = item["scent_profile"]
-                    st.markdown(f"**Top:** {', '.join(sp.get('top_notes', []))}")
-                    st.markdown(f"**Heart:** {', '.join(sp.get('heart_notes', []))}")
-                    st.markdown(f"**Base:** {', '.join(sp.get('base_notes', []))}")
-                
-                price_box_html = (
-                    "<div style='background-color: rgba(212, 175, 55, 0.08); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.3); margin: 6px 0; font-weight: 600; font-size: 0.85rem; color: #f3e5ab;'>"
-                    "✨ $30.00 ea. • <span style='font-weight: bold; color: #d4af37;'>Buy 3 bottles and pick a 4th bottle for free</span>"
-                    "</div>"
-                )
-                st.markdown(price_box_html, unsafe_allow_html=True)
+                    st.write(f"*{item['notes']}*")
+                    
+                    if item.get("scent_profile"):
+                        sp = item["scent_profile"]
+                        st.markdown(f"**Top:** {', '.join(sp.get('top_notes', []))}")
+                        st.markdown(f"**Heart:** {', '.join(sp.get('heart_notes', []))}")
+                        st.markdown(f"**Base:** {', '.join(sp.get('base_notes', []))}")
+                    
+                    price_box_html = (
+                        "<div style='background-color: rgba(212, 175, 55, 0.08); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.3); margin: 6px 0; font-weight: 600; font-size: 0.85rem; color: #f3e5ab;'>"
+                        "✨ $30.00 ea. • <span style='font-weight: bold; color: #d4af37;'>Buy 3 bottles and pick a 4th bottle for free</span>"
+                        "</div>"
+                    )
+                    st.markdown(price_box_html, unsafe_allow_html=True)
 
-                if stock_level <= 0:
-                    st.error("🔥 Out of Stock")
-                else:
-                    st.caption(f"Stock: {stock_level} available")
+                    if stock_level <= 0:
+                        st.error("🔥 Out of Stock")
+                    else:
+                        st.caption(f"Stock: {stock_level} available")
 
-                st.button(
-                    "🛍️ Add to Bag",
-                    key=f"btn_{item['id']}",
-                    on_click=add_to_cart,
-                    args=(item["id"],),
-                    use_container_width=True
-                )
-                st.markdown('</div>', unsafe_allow_html=True)
+                    st.button(
+                        "🛍️ Add to Bag",
+                        key=f"btn_{item['id']}",
+                        on_click=add_to_cart,
+                        args=(item["id"],),
+                        use_container_width=True
+                    )
+                    st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.button(
@@ -1651,15 +1486,18 @@ if st.session_state.get("admin_unlocked", False):
             inv_df = get_inventory_status()
             st.dataframe(inv_df, use_container_width=True)
 
-            with st.form("restock_form_admin"):
-                selected_item_id = st.selectbox("Select Blend to Restock", inv_df["item_id"] + " - " + inv_df["item_name"])
-                new_qty = st.number_input("Set New Stock Level", min_value=0, value=5)
-                restock_submit = st.form_submit_button("Apply Restock Level")
-                if restock_submit:
-                    target_id = selected_item_id.split(" - ")[0]
-                    update_item_stock(target_id, new_qty)
-                    st.success("Stock level updated successfully for the item!")
-                    st.rerun()
+            if not inv_df.empty:
+                with st.form("restock_form_admin"):
+                    selected_item_id = st.selectbox("Select Blend to Restock", inv_df["item_id"] + " - " + inv_df["item_name"])
+                    new_qty = st.number_input("Set New Stock Level", min_value=0, value=5)
+                    restock_submit = st.form_submit_button("Apply Restock Level")
+                    if restock_submit:
+                        target_id = selected_item_id.split(" - ")[0]
+                        update_item_stock(target_id, new_qty)
+                        st.success("Stock level updated successfully for the item!")
+                        st.rerun()
+            else:
+                st.info("No items in inventory to restock.")
 
         with admin_sub_tabs[2]:
             st.subheader("📋 Comprehensive Order Management Suite")
