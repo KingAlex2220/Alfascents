@@ -77,6 +77,12 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    /* HIDE STREAMLIT TOP HEADER TOOLBAR (Share, Edit, GitHub, Star, Menu) */
+    header[data-testid="stHeader"] {
+        visibility: hidden !important;
+        height: 0rem !important;
+    }
+    
     :root {
         --bg-color: #0d0f12;
         --card-bg: #161a22;
