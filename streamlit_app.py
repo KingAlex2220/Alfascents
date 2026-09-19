@@ -76,6 +76,11 @@ st.set_page_config(
 
 st.markdown(
     """
+    <!-- Safari UI Blending Tags -->
+    <meta name="theme-color" content="#0d0f12">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
     <style>
     /* HIDE STREAMLIT TOP HEADER TOOLBAR (Share, Edit, GitHub, Star, Menu) */
     header[data-testid="stHeader"] {
