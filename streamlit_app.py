@@ -383,7 +383,7 @@ st.markdown(
 )
 
 # ==========================================
-# DATABASE SETUP & AUTO-MIGRATION (SAFE CONTEXT MANAGEMENT)
+# DATABASE SETUP & AUTO-MIGRATION
 # ==========================================
 DB_FILE = "alfa_scents.db"
 DEFAULT_STOCK_PER_ITEM = 5
@@ -688,36 +688,20 @@ PARTNER_MAPPING = {
 }
 
 ZELLE_ACCOUNTS = {
-    "alex": {"name": "Alexander Thompson", "identifier": "8632364196"},
-    "jameka": {"name": "Jameka Hatton", "identifier": "jameka.hatton@example.com"},
     "ray": {"name": "Ira Ray Thompson", "identifier": "4079126043"},
-    "eq": {"name": "Eric Dior", "identifier": "6893122796"},
-    "eric": {"name": "Eric Dior", "identifier": "6893122796"},
 }
-DEFAULT_ZELLE_KEY = "alex"
+DEFAULT_ZELLE_KEY = "ray"
 
-VENMO_ACCOUNTS = {
-    "jameka": {"name": "Jameka Hatton", "identifier": "@Jameka-Hatton"},
-    "eq": {"name": "Eric Dior", "identifier": "@EqDior"},
-    "eric": {"name": "Eric Dior", "identifier": "@EqDior"},
-}
-DEFAULT_VENMO_KEY = "jameka"
+VENMO_ACCOUNTS = {}
+DEFAULT_VENMO_KEY = "ray"
 
-CASHAPP_ACCOUNTS = {
-    "jameka": {"name": "Jameka Howell", "identifier": "$JaMekaHowell"},
-    "eq": {"name": "Eric Dior", "identifier": "$EqDior3"},
-    "eric": {"name": "Eric Dior", "identifier": "$EqDior3"},
-}
-DEFAULT_CASHAPP_KEY = "jameka"
+CASHAPP_ACCOUNTS = {}
+DEFAULT_CASHAPP_KEY = "ray"
 
 APPLEPAY_ACCOUNTS = {
-    "alex": {"name": "Alexander Thompson", "identifier": "863-236-4196"},
-    "jameka": {"name": "Jameka Hatton", "identifier": "jameka.hatton@example.com"},
     "ray": {"name": "Ira Ray Thompson", "identifier": "407-912-6043"},
-    "eq": {"name": "Eric Dior", "identifier": "689-312-2796"},
-    "eric": {"name": "Eric Dior", "identifier": "689-312-2796"},
 }
-DEFAULT_APPLEPAY_KEY = "alex"
+DEFAULT_APPLEPAY_KEY = "ray"
 
 query_params = st.query_params
 raw_ref = query_params.get("ref", "").strip().lower()
@@ -736,10 +720,10 @@ else:
 current_ref_key = st.session_state.get("active_ref_key", DEFAULT_ZELLE_KEY)
 current_ref_tag = st.session_state.get("active_ref", "")
 
-active_zelle = ZELLE_ACCOUNTS.get(current_ref_key, ZELLE_ACCOUNTS[DEFAULT_ZELLE_KEY])
-active_venmo = VENMO_ACCOUNTS.get(current_ref_key, VENMO_ACCOUNTS[DEFAULT_VENMO_KEY])
-active_cashapp = CASHAPP_ACCOUNTS.get(current_ref_key, CASHAPP_ACCOUNTS[DEFAULT_CASHAPP_KEY])
-active_applepay = APPLEPAY_ACCOUNTS.get(current_ref_key, APPLEPAY_ACCOUNTS[DEFAULT_APPLEPAY_KEY])
+active_zelle = ZELLE_ACCOUNTS.get(current_ref_key, ZELLE_ACCOUNTS.get(DEFAULT_ZELLE_KEY, {"name": "Boutique Account", "identifier": "Contact for payment"}))
+active_venmo = VENMO_ACCOUNTS.get(current_ref_key, VENMO_ACCOUNTS.get(DEFAULT_VENMO_KEY, {"name": "Boutique Account", "identifier": "Contact for payment"}))
+active_cashapp = CASHAPP_ACCOUNTS.get(current_ref_key, CASHAPP_ACCOUNTS.get(DEFAULT_CASHAPP_KEY, {"name": "Boutique Account", "identifier": "Contact for payment"}))
+active_applepay = APPLEPAY_ACCOUNTS.get(current_ref_key, APPLEPAY_ACCOUNTS.get(DEFAULT_APPLEPAY_KEY, {"name": "Boutique Account", "identifier": "Contact for payment"}))
 
 
 def send_order_emails(customer_name, customer_email, total_due, items_summary, payment_method, referral_tag):
@@ -863,23 +847,25 @@ pay_tab1, pay_tab2, pay_tab3, pay_tab4 = st.sidebar.tabs(["Cash App", "Venmo", "
 
 with pay_tab1:
     st.markdown(f"**{active_cashapp['name']}**")
-    clean_cash_tag = active_cashapp['identifier'].replace("$", "")
-    cash_app_url = f"https://cash.app/{clean_cash_tag}"
-    st.markdown(f"Handle: [👉 ${clean_cash_tag}]({cash_app_url})")
+    st.markdown("Please submit payment using Cash App.")
 
 with pay_tab2:
     st.markdown(f"**{active_venmo['name']}**")
-    clean_venmo_tag = active_venmo['identifier'].replace("@", "")
-    venmo_app_url = f"venmo://payto?recipients={clean_venmo_tag}"
-    st.markdown(f"Handle: [👉 @{clean_venmo_tag}]({venmo_app_url})")
+    st.markdown("Please submit payment using Venmo.")
 
 with pay_tab3:
     st.markdown(f"**{active_zelle['name']}**")
-    st.markdown(f"Phone/ID: `{active_zelle['identifier']}`")
+    if active_zelle.get("identifier") and active_zelle["identifier"] != "Contact for payment":
+        st.markdown(f"Phone/ID: `{active_zelle['identifier']}`")
+    else:
+        st.markdown("Please submit payment using Zelle.")
 
 with pay_tab4:
     st.markdown(f"**{active_applepay['name']}**")
-    st.markdown(f"Apple Pay Number: `{active_applepay['identifier']}`")
+    if active_applepay.get("identifier") and active_applepay["identifier"] != "Contact for payment":
+        st.markdown(f"Apple Pay Number: `{active_applepay['identifier']}`")
+    else:
+        st.markdown("Please submit payment using Apple Pay.")
 
 # ==========================================
 # SIDEBAR - SHOPPING BAG SUMMARY
@@ -1249,7 +1235,7 @@ elif selected_nav == "📦 Full Inventory":
                 send_order_emails(qr_cust_name, qr_cust_contact, qr_final_total, full_request_summary, qr_payment_method, current_ref_tag)
 
                 st.success(f"Success! Your request for {qr_total_qty} item(s) has been submitted for {qr_cust_name}.")
-                st.info(f"Please complete your settlement of **${qr_final_total:.2f}** via **{qr_payment_method}** using the payment handles in the sidebar.")
+                st.info(f"Please complete your settlement of **${qr_final_total:.2f}** via **{qr_payment_method}** using the payment details in the sidebar.")
 
 # ------------------------------------------
 # TAB 3: GIFT CARDS
@@ -1477,24 +1463,28 @@ elif selected_nav == "🛒 Checkout & Invoice":
             with pay_info_col1:
                 st.markdown("**Cash App**")
                 st.markdown(f"Name: **{active_cashapp['name']}**")
-                clean_cash_tag = active_cashapp['identifier'].replace("$", "")
-                st.markdown(f"Handle: [👉 ${clean_cash_tag}](https://cash.app/{clean_cash_tag})")
+                st.markdown("Contact for handle")
                 
             with pay_info_col2:
                 st.markdown("**Venmo**")
                 st.markdown(f"Name: **{active_venmo['name']}**")
-                clean_venmo_tag = active_venmo['identifier'].replace("@", "")
-                st.markdown(f"Handle: [👉 @{clean_venmo_tag}](venmo://payto?recipients={clean_venmo_tag})")
+                st.markdown("Contact for handle")
                 
             with pay_info_col3:
                 st.markdown("**Zelle**")
                 st.markdown(f"Name: **{active_zelle['name']}**")
-                st.markdown(f"Phone/ID: `{active_zelle['identifier']}`")
+                if active_zelle.get("identifier") and active_zelle["identifier"] != "Contact for payment":
+                    st.markdown(f"Phone/ID: `{active_zelle['identifier']}`")
+                else:
+                    st.markdown("Contact for phone/ID")
 
             with pay_info_col4:
                 st.markdown("**Apple Pay**")
                 st.markdown(f"Name: **{active_applepay['name']}**")
-                st.markdown(f"Phone: `{active_applepay['identifier']}`")
+                if active_applepay.get("identifier") and active_applepay["identifier"] != "Contact for payment":
+                    st.markdown(f"Phone: `{active_applepay['identifier']}`")
+                else:
+                    st.markdown("Contact for phone/ID")
 
         st.markdown("---")
         st.subheader("Customer Shipping & Payment Submission Form")
@@ -1542,13 +1532,6 @@ elif selected_nav == "🛒 Checkout & Invoice":
                         with sqlite3.connect(DB_FILE) as conn_gc:
                             c_gc = conn_gc.cursor()
                             c_gc.execute("UPDATE gift_cards SET current_balance = 0, status = 'Redeemed' WHERE code = ?", (st.session_state.applied_gift_card,))
-
-                    if payment_method == "Cash App":
-                        clean_cash_tag = active_cashapp['identifier'].replace("$", "")
-                        st.link_button("🚀 Launch Cash App & Pay Now", f"https://cash.app/{clean_cash_tag}/{final_subtotal:.2f}", type="primary", use_container_width=True)
-                    elif payment_method == "Venmo":
-                        clean_venmo_tag = active_venmo['identifier'].replace("@", "")
-                        st.link_button("🚀 Launch Venmo & Pay Now", f"https://venmo.com/{clean_venmo_tag}?txn=pay&amount={final_subtotal:.2f}&note=Alfa-Scents+Order", type="primary", use_container_width=True)
 
                     st.session_state.cart = {}
                     st.session_state.applied_gift_card = None
