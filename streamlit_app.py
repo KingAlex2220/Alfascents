@@ -1714,4 +1714,7 @@ if st.session_state.get("admin_unlocked", True):
                         name = lead["customer_name"] if lead["customer_name"] else "Valued Customer"
                         
                         if email and "@" in email:
-                         
+                            if send_marketing_campaign_email(email, name, campaign_choice):
+                                success_count += 1
+                                
+                    st.success(f"Successfully broadcasted '{campaign_choice}' campaign to {success_count} customer(s)!")
