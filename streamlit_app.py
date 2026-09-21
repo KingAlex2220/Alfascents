@@ -12,7 +12,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # ==========================================
-# MASTER FRAGRANCES DICTIONARY (EMPTY FOR NEW COLLECTION)
+# FRAGRANCES DICTIONARY (EMPTY FOR NEW COLLECTION)
 # ==========================================
 fragrances = {
     # Add your new fragrances and scent profiles here using the format:
@@ -68,7 +68,7 @@ for key, data in fragrances.items():
 # PAGE CONFIGURATION & LUXURY BOUTIQUE STYLING
 # ==========================================
 st.set_page_config(
-    page_title="Alfa Scents | Luxury Boutique Marketplace",
+    page_title="ALFA SCENTS | Luxury Boutique Marketplace",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -350,21 +350,21 @@ def switch_to_checkout_tab():
 # GLOBAL DISCLAIMERS & HELPERS
 # ==========================================
 DISCLAIMER_TEXT = (
-    "Alfa Scents offers proprietary, independently formulated scents"
+    "ALFA SCENTS offers proprietary, independently formulated scents"
     " inspired by popular fragrance profiles. Any reference to scent families or"
     " style impressions is strictly for descriptive purposes to give"
-    " customers an idea of the olfactory notes. Alfa Scents does not use"
+    " customers an idea of the olfactory notes. ALFA SCENTS does not use"
     " third-party trademarked names, nor are our products affiliated with,"
     " endorsed by, or sponsored by any third-party brands or manufacturers."
 )
 
 ALLERGY_DISCLAIMER_TEXT = (
-    "⚠️ ALLERGY & SKIN SENSITIVITY NOTICE: Alfa Scents products contain"
+    "⚠️ ALLERGY & SKIN SENSITIVITY NOTICE: ALFA SCENTS products contain"
     " concentrated fragrance oils, essential oils, and aromatic compounds."
     " Please perform a patch test on a small area of skin before full"
     " application. Discontinue use immediately if redness, irritation, or"
     " itching occurs. Avoid contact with eyes, damaged skin, or open wounds."
-    " Do not ingest. Keep out of reach of children and pets. Alfa Scents"
+    " Do not ingest. Keep out of reach of children and pets. ALFA SCENTS"
     " assumes no liability for adverse allergic reaction or skin sensitivities."
 )
 
@@ -577,7 +577,7 @@ def send_order_emails(customer_name, customer_email, total_due, items_summary, p
     msg_customer = MIMEMultipart()
     msg_customer["From"] = SENDER_EMAIL
     msg_customer["To"] = customer_email
-    msg_customer["Subject"] = "✨ Alfa Scents - Luxury Boutique Order Receipt"
+    msg_customer["Subject"] = "✨ ALFA SCENTS - Luxury Boutique Order Receipt"
     
     customer_html = f"""
     <h3>Hi {customer_name}, thank you for your luxury purchase!</h3>
@@ -630,19 +630,19 @@ def send_marketing_campaign_email(recipient_email, recipient_name, campaign_type
     msg["To"] = recipient_email
     
     if campaign_type == "abandoned_cart":
-        msg["Subject"] = "✨ Complete Your Alfa Scents Order – Exclusive Perks Inside!"
+        msg["Subject"] = "✨ Complete Your ALFA SCENTS Order – Exclusive Perks Inside!"
         html_content = f"""
         <h3>Hi {recipient_name},</h3>
-        <p>We noticed you left some luxury impressions in your shopping bag at Alfa Scents.</p>
+        <p>We noticed you left some luxury impressions in your shopping bag at ALFA SCENTS.</p>
         <p>Complete your order today and use code <b>LUXURY10</b> for an extra special touch on your bespoke scents!</p>
         <p><a href="https://alfascents.streamlit.app/" style="background: #d4af37; color: #000; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px;">Return to Checkout</a></p>
-        <p>Warm regards,<br><b>Alfa Scents Boutique Team</b></p>
+        <p>Warm regards,<br><b>ALFA SCENTS Boutique Team</b></p>
         """
     elif campaign_type == "winback":
-        msg["Subject"] = "✨ Discover Our Latest Master Impressions at Alfa Scents"
+        msg["Subject"] = "✨ Discover Our Latest Impressions at ALFA SCENTS"
         html_content = f"""
         <h3>Hello {recipient_name},</h3>
-        <p>It's been a while since your last sensory journey with Alfa Scents. Explore our newest 60ml Shatter-Proof Precision Polymer Travel Editions and classic glass blends!</p>
+        <p>It's been a while since your last sensory journey with ALFA SCENTS. Explore our newest 60ml Shatter-Proof Precision Polymer Travel Editions and classic glass blends!</p>
         <p><b>Special Offer:</b> Buy 3 bottles and pick a 4th bottle for free across our entire catalog.</p>
         <p><a href="https://alfascents.streamlit.app/" style="background: #d4af37; color: #000; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px;">Explore Collection</a></p>
         """
@@ -839,7 +839,7 @@ if selected_nav == "✨ Signature Blends":
         st.write("---")
         st.warning(ALLERGY_DISCLAIMER_TEXT)
 
-    st.header("Alfa Scents Master Signature Collection")
+    st.header("ALFA SCENTS Signature Collection")
     st.caption("Explore our shatter-proof 60ml precision polymer travel bottles or classic 50ml glass bottles.")
 
     if total_qty > 0:
@@ -856,7 +856,7 @@ if selected_nav == "✨ Signature Blends":
             )
 
     if not filtered_catalog:
-        st.info("✨ Our new Master Signature Collection is coming soon! You can still browse or request custom scents in the 📦 Full Inventory tab.")
+        st.info("✨ Our new Signature Collection is coming soon! You can still browse or request custom scents in the 📦 Full Inventory tab.")
     else:
         cols = st.columns(2)
         for idx, item in enumerate(filtered_catalog):
@@ -880,7 +880,7 @@ if selected_nav == "✨ Signature Blends":
                     st.markdown(f"### {item['name']}")
                     st.caption(f"**{item['gender']}'s** • {item['category']}")
                     
-                    st.markdown('<div class="luxury-impression-stamp"><span>✨ Alfa Scents Master Impression • Artisanal Craft Blend ✨</span></div>', unsafe_allow_html=True)
+                    st.markdown('<div class="luxury-impression-stamp"><span>✨ ALFA SCENTS Impression • Artisanal Craft Blend ✨</span></div>', unsafe_allow_html=True)
 
                     st.write(f"*{item['notes']}*")
                     
@@ -945,7 +945,7 @@ elif selected_nav == "📦 Full Inventory":
                 on_click=switch_to_checkout_tab
             )
 
-    st.subheader("📚 Browse Our Full Master Inventory List")
+    st.subheader("📚 Browse Our Full Inventory List")
     st.write("Check the 'Add to Cart' box next to any item below to add it directly to your shopping bag:")
 
     full_inv_bottle_selection = st.radio(
@@ -1286,10 +1286,10 @@ elif selected_nav == "🛒 Checkout & Invoice":
         with invoice_container:
             inv_col1, inv_col2 = st.columns(2)
             with inv_col1:
-                st.markdown("**Alfa Scents Boutique**")
+                st.markdown("**ALFA SCENTS Boutique**")
                 st.markdown("100% Oil-Based Luxury Impressions")
                 st.markdown(f"**Invoice Date:** {datetime.now().strftime('%Y-%m-%d')}")
-                st.markdown(f"**Master Cycle:** {get_current_30_day_cycle()}")
+                st.markdown(f"**Cycle:** {get_current_30_day_cycle()}")
                 if current_ref_tag:
                     st.markdown(f"**Partner Referral:** {current_ref_tag}")
             with inv_col2:
@@ -1397,7 +1397,7 @@ elif selected_nav == "🔍 Customer Order Lookup":
             st.subheader(f"Found {len(results)} Order(s)")
             for idx, row in results.iterrows():
                 with st.expander(f"Order #{row['id']} — Status: {row['status']} ({row['order_date']})"):
-                    st.write(f"**30-Day Master Cycle ID:** {row['cycle_id']}")
+                    st.write(f"**30-Day Cycle ID:** {row['cycle_id']}")
                     st.write(f"**Purchased Items:** {row['items_summary']}")
                     st.write(f"**Total Bottles:** {row['total_qty']}")
                     st.write(f"**Total Amount:** ${row['final_total']:.2f}")
@@ -1437,7 +1437,7 @@ with st.sidebar:
             """, unsafe_allow_html=True)
 
         st.divider()
-        st.write("🛠️ **Master Admin & Inventory**")
+        st.write("🛠️ **Admin & Inventory Controls**")
         
         if "admin_unlocked" not in st.session_state:
             st.session_state["admin_unlocked"] = False
@@ -1462,12 +1462,12 @@ with st.sidebar:
             st.rerun()
 
 # ==========================================
-# MASTER ADMIN PANEL BLOCK (WITH ORDER MANAGEMENT & MARKETING SUITE)
+# ADMIN PANEL BLOCK (WITH ORDER MANAGEMENT & MARKETING SUITE)
 # ==========================================
 if st.session_state.get("admin_unlocked", False):
     st.markdown("---")
     with st.container(border=True):
-        st.header("🛠️ Master Admin & Order Management Suite")
+        st.header("🛠️ Admin & Order Management Suite")
 
         admin_sub_tabs = st.tabs([
             "📊 Affiliate Performance", 
