@@ -1,4 +1,4 @@
-Here is the updated code. The header in the Signature Blends section now dynamically appends the designer name (Chanel Impressions) right after the hyphen:
+
 from datetime import datetime
 import os
 import random
