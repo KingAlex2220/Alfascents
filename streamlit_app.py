@@ -16,13 +16,14 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) if "__file__" in locals() 
 DEFAULT_PRODUCT_IMAGE = os.path.join(ROOT_DIR, "image.png")
 
 # ==========================================
-# FRAGRANCES DICTIONARY (PRE-LOADED CHANEL IMPRESSIONS)
+# FRAGRANCES DICTIONARY (CHANEL IMPRESSIONS)
 # ==========================================
 fragrances = {
     # ---------------- MEN'S COLLECTION ----------------
     "bleu_de_chanel_edp": {
         "name": "Bleu de Chanel Impression (EDP)",
         "impression_of": "Chanel - Bleu de Chanel Eau de Parfum",
+        "designer": "Chanel",
         "gender": "Men",
         "badge_primary": "Signature",
         "badge_secondary": "60ml Polymer",
@@ -36,6 +37,7 @@ fragrances = {
     "bleu_de_chanel_parfum": {
         "name": "Bleu de Chanel Parfum Impression",
         "impression_of": "Chanel - Bleu de Chanel Parfum",
+        "designer": "Chanel",
         "gender": "Men",
         "badge_primary": "Intense",
         "badge_secondary": "60ml Polymer",
@@ -49,6 +51,7 @@ fragrances = {
     "allure_homme_sport": {
         "name": "Allure Homme Sport Impression",
         "impression_of": "Chanel - Allure Homme Sport",
+        "designer": "Chanel",
         "gender": "Men",
         "badge_primary": "Sport",
         "badge_secondary": "60ml Polymer",
@@ -62,6 +65,7 @@ fragrances = {
     "egoiste_platinum": {
         "name": "Égoïste Platinum Impression",
         "impression_of": "Chanel - Égoïste Platinum",
+        "designer": "Chanel",
         "gender": "Men",
         "badge_primary": "Fresh Aromatic",
         "badge_secondary": "60ml Polymer",
@@ -75,6 +79,7 @@ fragrances = {
     "allure_homme_edition_blanche": {
         "name": "Allure Homme Édition Blanche Impression",
         "impression_of": "Chanel - Allure Homme Édition Blanche",
+        "designer": "Chanel",
         "gender": "Men",
         "badge_primary": "Citrus Oriental",
         "badge_secondary": "60ml Polymer",
@@ -88,6 +93,7 @@ fragrances = {
     "antaeus_pour_homme": {
         "name": "Antaeus Pour Homme Impression",
         "impression_of": "Chanel - Antaeus Pour Homme",
+        "designer": "Chanel",
         "gender": "Men",
         "badge_primary": "Classic Bold",
         "badge_secondary": "60ml Polymer",
@@ -102,6 +108,7 @@ fragrances = {
     "coco_mademoiselle": {
         "name": "Coco Mademoiselle Impression",
         "impression_of": "Chanel - Coco Mademoiselle",
+        "designer": "Chanel",
         "gender": "Women",
         "badge_primary": "Best Seller",
         "badge_secondary": "60ml Polymer",
@@ -115,6 +122,7 @@ fragrances = {
     "chanel_no5": {
         "name": "Chanel N°5 Impression",
         "impression_of": "Chanel - Chanel N°5",
+        "designer": "Chanel",
         "gender": "Women",
         "badge_primary": "Iconic Classic",
         "badge_secondary": "60ml Polymer",
@@ -128,6 +136,7 @@ fragrances = {
     "chance_eau_tendre": {
         "name": "Chance Eau Tendre Impression",
         "impression_of": "Chanel - Chance Eau Tendre",
+        "designer": "Chanel",
         "gender": "Women",
         "badge_primary": "Floral Fruity",
         "badge_secondary": "60ml Polymer",
@@ -141,6 +150,7 @@ fragrances = {
     "chance_eau_fraiche": {
         "name": "Chance Eau Fraîche Impression",
         "impression_of": "Chanel - Chance Eau Fraîche",
+        "designer": "Chanel",
         "gender": "Women",
         "badge_primary": "Zesty Fresh",
         "badge_secondary": "60ml Polymer",
@@ -154,6 +164,7 @@ fragrances = {
     "coco_noir": {
         "name": "Coco Noir Impression",
         "impression_of": "Chanel - Coco Noir",
+        "designer": "Chanel",
         "gender": "Women",
         "badge_primary": "Night Collection",
         "badge_secondary": "60ml Polymer",
@@ -167,6 +178,7 @@ fragrances = {
     "gabrielle_chanel": {
         "name": "Gabrielle Chanel Impression",
         "impression_of": "Chanel - Gabrielle Chanel",
+        "designer": "Chanel",
         "gender": "Women",
         "badge_primary": "Radiant Floral",
         "badge_secondary": "60ml Polymer",
@@ -189,6 +201,7 @@ for key, data in fragrances.items():
     FRAGRANCE_CATALOG.append({
         "id": f"{key}_polymer",
         "name": data['name'],
+        "designer": data.get('designer', 'Chanel'),
         "gender": data["gender"],
         "badge_primary": data["badge_primary"],
         "badge_secondary": data.get("badge_secondary", "60ml Polymer"),
@@ -219,7 +232,7 @@ st.markdown(
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
-    /* HIDE STREAMLIT TOP HEADER TOOLBAR (Share, Edit, GitHub, Star, Menu) */
+    /* HIDE STREAMLIT TOP HEADER TOOLBAR */
     header[data-testid="stHeader"] {
         visibility: hidden !important;
         height: 0rem !important;
@@ -970,7 +983,8 @@ if selected_nav == "✨ Signature Blends":
         st.write("---")
         st.warning(ALLERGY_DISCLAIMER_TEXT)
 
-    st.header("ALFA SCENTS Signature Collection")
+    # 1. Added hyphen to header
+    st.header("ALFA SCENTS Signature Collection -")
     st.caption("Featured in 60ml shatter-proof precision polymer bottles.")
 
     if total_qty > 0:
@@ -1013,10 +1027,12 @@ if selected_nav == "✨ Signature Blends":
                     with badge_col2:
                         st.markdown(f'<span class="badge-offer">{item.get("badge_secondary", "Special Offer")}</span>', unsafe_allow_html=True)
 
-                    st.markdown(f"### {item['name']}")
+                    # 2. Display designer name & impression explicitly in product title
+                    designer_name = item.get("designer", "Chanel")
+                    st.markdown(f"### {item['name']} ({designer_name} Collection) Impression")
                     st.caption(f"**{item['gender']}'s** • {item['category']}")
                     
-                    st.markdown('<div class="luxury-impression-stamp"><span>✨ ALFA SCENTS Impression • Artisanal Craft Blend ✨</span></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="luxury-impression-stamp"><span>✨ ALFA SCENTS {designer_name} Collection Impression • Artisanal Craft Blend ✨</span></div>', unsafe_allow_html=True)
 
                     st.write(f"*{item['notes']}*")
                     
