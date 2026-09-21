@@ -1,3 +1,5 @@
+Here is the updated code containing all 12 Chanel fragrance impressions from your catalog pre-loaded into the fragrances dictionary.
+The catalog loop builds each product entry, formats top, heart, and base notes directly from your document, and pairs them side-by-side with your default bottle image (DEFAULT_PRODUCT_IMAGE) in the UI.
 from datetime import datetime
 import os
 import random
@@ -16,23 +18,167 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) if "__file__" in locals() 
 DEFAULT_PRODUCT_IMAGE = os.path.join(ROOT_DIR, "image.png")
 
 # ==========================================
-# FRAGRANCES DICTIONARY (EMPTY FOR NEW COLLECTION)
+# FRAGRANCES DICTIONARY (PRE-LOADED CHANEL IMPRESSIONS)
 # ==========================================
 fragrances = {
-    # Add your new fragrances and scent profiles here using the format:
-    # "unique_id": {
-    #     "name": "Fragrance Name",
-    #     "impression_of": "Brand - Scent Name",
-    #     "gender": "Men / Women / Unisex",
-    #     "badge_primary": "Primary Badge",
-    #     "badge_secondary": "Secondary Badge",
-    #     "scent_profile": {
-    #         "top_notes": ["Note 1", "Note 2"],
-    #         "heart_notes": ["Note 1", "Note 2"],
-    #         "base_notes": ["Note 1", "Note 2"],
-    #     },
-    #     "description": "Fragrance description here.",
-    # },
+    # ---------------- MEN'S COLLECTION ----------------
+    "bleu_de_chanel_edp": {
+        "name": "Bleu de Chanel Impression (EDP)",
+        "impression_of": "Chanel - Bleu de Chanel Eau de Parfum",
+        "gender": "Men",
+        "badge_primary": "Signature",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Grapefruit", "Lemon", "Mint", "Pink Pepper"],
+            "heart_notes": ["Ginger", "Iso E Super"],
+            "base_notes": ["Cedar", "Sandalwood"],
+        },
+        "description": "A refined, fresh woody-aromatic fragrance blending vibrant citrus, spicy ginger, and rich cedar sandalwood undertones.",
+    },
+    "bleu_de_chanel_parfum": {
+        "name": "Bleu de Chanel Parfum Impression",
+        "impression_of": "Chanel - Bleu de Chanel Parfum",
+        "gender": "Men",
+        "badge_primary": "Intense",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Lemon Zest", "Bergamot", "Mint"],
+            "heart_notes": ["Lavender", "Pineapple"],
+            "base_notes": ["Cedar", "Sandalwood"],
+        },
+        "description": "An intense and deep interpretation featuring crisp lemon zest, aromatic lavender, and smooth, velvety woods.",
+    },
+    "allure_homme_sport": {
+        "name": "Allure Homme Sport Impression",
+        "impression_of": "Chanel - Allure Homme Sport",
+        "gender": "Men",
+        "badge_primary": "Sport",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Orange", "Sea Notes", "Mandarin"],
+            "heart_notes": ["Pepper", "Neroli"],
+            "base_notes": ["Cedar", "Tonka Bean", "Vanilla"],
+        },
+        "description": "An invigorating aquatic-fresh blend accented by crisp citrus, spicy pepper, and a warm tonka bean vanilla finish.",
+    },
+    "egoiste_platinum": {
+        "name": "Égoïste Platinum Impression",
+        "impression_of": "Chanel - Égoïste Platinum",
+        "gender": "Men",
+        "badge_primary": "Fresh Aromatic",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Lavender", "Rosemary", "Neroli", "Petitgrain"],
+            "heart_notes": ["Geranium", "Clary Sage"],
+            "base_notes": ["Cedarwood"],
+        },
+        "description": "A crisp, herbal, and metallic-fresh composition highlighting alpine lavender, clary sage, and structured cedarwood.",
+    },
+    "allure_homme_edition_blanche": {
+        "name": "Allure Homme Édition Blanche Impression",
+        "impression_of": "Chanel - Allure Homme Édition Blanche",
+        "gender": "Men",
+        "badge_primary": "Citrus Oriental",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Lemon", "Bergamot"],
+            "heart_notes": ["Sandalwood"],
+            "base_notes": ["Madagascar Vanilla", "Vetiver", "Amber"],
+        },
+        "description": "A creamy citrus-gourmand balance of sparkling lemon, buttery sandalwood, and sweet Madagascar vanilla.",
+    },
+    "antaeus_pour_homme": {
+        "name": "Antaeus Pour Homme Impression",
+        "impression_of": "Chanel - Antaeus Pour Homme",
+        "gender": "Men",
+        "badge_primary": "Classic Bold",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Myrrh", "Clary Sage", "Thyme", "Basil"],
+            "heart_notes": ["Coriander", "Rose"],
+            "base_notes": ["Patchouli", "Oakmoss"],
+        },
+        "description": "A powerful, masculine leather-chypre scent driven by aromatic myrrh, dark patchouli, and earthy oakmoss.",
+    },
+    # ---------------- WOMEN'S COLLECTION ----------------
+    "coco_mademoiselle": {
+        "name": "Coco Mademoiselle Impression",
+        "impression_of": "Chanel - Coco Mademoiselle",
+        "gender": "Women",
+        "badge_primary": "Best Seller",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Orange", "Mandarin Orange", "Bergamot"],
+            "heart_notes": ["Turkish Rose", "Jasmine"],
+            "base_notes": ["Patchouli", "Vetiver"],
+        },
+        "description": "An elegant, modern oriental blend featuring bright citrus blossoms, delicate Turkish rose, and deep patchouli.",
+    },
+    "chanel_no5": {
+        "name": "Chanel N°5 Impression",
+        "impression_of": "Chanel - Chanel N°5",
+        "gender": "Women",
+        "badge_primary": "Iconic Classic",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Aldehydes", "Ylang-Ylang", "Neroli", "Bergamot"],
+            "heart_notes": ["Iris", "Jasmine", "Rose"],
+            "base_notes": ["Sandalwood"],
+        },
+        "description": "A timeless floral-aldehyde masterpiece with rich ylang-ylang, powdery iris, velvet jasmine, and smooth sandalwood.",
+    },
+    "chance_eau_tendre": {
+        "name": "Chance Eau Tendre Impression",
+        "impression_of": "Chanel - Chance Eau Tendre",
+        "gender": "Women",
+        "badge_primary": "Floral Fruity",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Quince", "Grapefruit"],
+            "heart_notes": ["Rose", "Jasmine"],
+            "base_notes": ["White Musk"],
+        },
+        "description": "A soft, romantic fruity-floral fragrance radiating juicy quince, delicate jasmine petals, and clean white musk.",
+    },
+    "chance_eau_fraiche": {
+        "name": "Chance Eau Fraîche Impression",
+        "impression_of": "Chanel - Chance Eau Fraîche",
+        "gender": "Women",
+        "badge_primary": "Zesty Fresh",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Citron"],
+            "heart_notes": ["Jasmine"],
+            "base_notes": ["Cedar", "Teakwood", "Amber", "Patchouli"],
+        },
+        "description": "A sparkling, energetic floral-sparkle composition built on zesty citron, airy jasmine, and warm teakwood.",
+    },
+    "coco_noir": {
+        "name": "Coco Noir Impression",
+        "impression_of": "Chanel - Coco Noir",
+        "gender": "Women",
+        "badge_primary": "Night Collection",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Grapefruit", "Bergamot"],
+            "heart_notes": ["Rose", "Jasmine", "Geranium"],
+            "base_notes": ["Patchouli", "Tonka Bean", "Vanilla"],
+        },
+        "description": "A luminous, seductive night scent fusing dark rose floral notes with magnetic patchouli and rich tonka vanilla.",
+    },
+    "gabrielle_chanel": {
+        "name": "Gabrielle Chanel Impression",
+        "impression_of": "Chanel - Gabrielle Chanel",
+        "gender": "Women",
+        "badge_primary": "Radiant Floral",
+        "badge_secondary": "60ml Polymer",
+        "scent_profile": {
+            "top_notes": ["Grapefruit", "Mandarin", "Blackcurrant"],
+            "heart_notes": ["Orange Blossom", "Jasmine", "Ylang-Ylang"],
+            "base_notes": ["White Musk"],
+        },
+        "description": "A luminous solar floral arrangement woven around creamy white orange blossom, exotic ylang-ylang, and jasmine.",
+    },
 }
 
 # ==========================================
@@ -845,28 +991,29 @@ if selected_nav == "✨ Signature Blends":
     if not filtered_catalog:
         st.info("✨ Our new Signature Collection is coming soon! You can still browse or request custom scents in the 📦 Full Inventory tab.")
     else:
-        cols = st.columns(2)
         for idx, item in enumerate(filtered_catalog):
-            col = cols[idx % 2]
             stock_level = (
                 inventory_df.loc[item["id"], "stock_level"]
                 if item["id"] in inventory_df.index
                 else 5
             )
 
-            with col:
-                with st.container():
-                    st.markdown('<div class="luxury-card">', unsafe_allow_html=True)
-                    
+            with st.container():
+                st.markdown('<div class="luxury-card">', unsafe_allow_html=True)
+                
+                # Side-by-side layout: Product Image on left, Scent Details on right
+                img_col, details_col = st.columns([1, 2])
+
+                with img_col:
+                    if item.get("image_url") and os.path.exists(item["image_url"]):
+                        st.image(item["image_url"], use_container_width=True)
+
+                with details_col:
                     badge_col1, badge_col2 = st.columns([1, 1])
                     with badge_col1:
                         st.markdown(f'<span class="badge-signature">{item.get("badge_primary", "Signature")}</span>', unsafe_allow_html=True)
                     with badge_col2:
                         st.markdown(f'<span class="badge-offer">{item.get("badge_secondary", "Special Offer")}</span>', unsafe_allow_html=True)
-
-                    # Display image if provided
-                    if item.get("image_url") and os.path.exists(item["image_url"]):
-                        st.image(item["image_url"], use_container_width=True)
 
                     st.markdown(f"### {item['name']}")
                     st.caption(f"**{item['gender']}'s** • {item['category']}")
@@ -877,9 +1024,9 @@ if selected_nav == "✨ Signature Blends":
                     
                     if item.get("scent_profile"):
                         sp = item["scent_profile"]
-                        st.markdown(f"**Top:** {', '.join(sp.get('top_notes', []))}")
-                        st.markdown(f"**Heart:** {', '.join(sp.get('heart_notes', []))}")
-                        st.markdown(f"**Base:** {', '.join(sp.get('base_notes', []))}")
+                        st.markdown(f"**Top Notes:** {', '.join(sp.get('top_notes', []))}")
+                        st.markdown(f"**Heart Notes:** {', '.join(sp.get('heart_notes', []))}")
+                        st.markdown(f"**Base Notes:** {', '.join(sp.get('base_notes', []))}")
                     
                     price_box_html = (
                         "<div style='background-color: rgba(212, 175, 55, 0.08); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.3); margin: 6px 0; font-weight: 600; font-size: 0.85rem; color: #f3e5ab;'>"
@@ -900,7 +1047,8 @@ if selected_nav == "✨ Signature Blends":
                         args=(item["id"],),
                         use_container_width=True
                     )
-                    st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown("<br>", unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.button(
