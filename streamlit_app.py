@@ -1,5 +1,3 @@
-Here is the updated code containing all 12 Chanel fragrance impressions from your catalog pre-loaded into the fragrances dictionary.
-The catalog loop builds each product entry, formats top, heart, and base notes directly from your document, and pairs them side-by-side with your default bottle image (DEFAULT_PRODUCT_IMAGE) in the UI.
 from datetime import datetime
 import os
 import random
