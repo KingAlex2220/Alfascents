@@ -236,17 +236,34 @@ st.markdown(
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
-    /* CLEAN HEADER STYLING - ALLOWS SIDEBAR TO BE FULLY VISIBLE & ACCESSIBLE */
+    /* COMPLETELY HIDE THE RIGHT-SIDE STREAMLIT TOOLBAR (FORK, GITHUB, MENU) */
+    header[data-testid="stHeader"] > div:first-child,
+    header[data-testid="stHeader"] > div:last-child {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* REMOVE ANY BANNER OVERLAY TEXT */
+    header[data-testid="stHeader"]::after {
+        content: "" !important;
+        display: none !important;
+    }
+
+    /* KEEP HEADER TRANSPARENT */
     header[data-testid="stHeader"] {
         background: transparent !important;
+        height: 3.5rem !important;
     }
-    
+
+    /* ENSURE SIDEBAR TOGGLE ICON (>>) STAYS FULLY VISIBLE & CLICKABLE ON THE LEFT */
     [data-testid="stSidebarCollapseButton"] {
         visibility: visible !important;
+        display: flex !important;
         color: #d4af37 !important;
         background-color: #161a22 !important;
         border: 1px solid #d4af37 !important;
         border-radius: 6px !important;
+        z-index: 999999 !important;
     }
     
     :root {
