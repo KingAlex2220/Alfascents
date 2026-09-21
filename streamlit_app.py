@@ -796,8 +796,6 @@ def send_marketing_campaign_email(recipient_email, recipient_name, campaign_type
 st.sidebar.title("✨ Luxury Boutique Hub")
 st.sidebar.caption("All Bottles $30 • Special Buy 3 Get 1 Free")
 
-st.sidebar.success("🔗 Representative Account: **Ira Ray Thompson**")
-
 search_term = st.sidebar.text_input("🔍 Search Boutique Catalog...", "").lower()
 selected_gender = st.sidebar.radio("Department Filter", ["All", "Men", "Women", "Unisex"])
 priority_only = st.sidebar.checkbox("🔥 Show Priority Preorders Only")
