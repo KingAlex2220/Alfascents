@@ -15,9 +15,9 @@ from email.mime.multipart import MIMEMultipart
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) if "__file__" in locals() else os.getcwd()
 DEFAULT_PRODUCT_IMAGE = os.path.join(ROOT_DIR, "image.png")
 
-# Set admin panel locked by default requiring passcode entry in sidebar
+# Automatically unlock admin panel by default so Back Office stays permanently visible
 if "admin_unlocked" not in st.session_state:
-    st.session_state["admin_unlocked"] = False
+    st.session_state["admin_unlocked"] = True
 
 # ==========================================
 # FRAGRANCES DICTIONARY (CHANEL IMPRESSIONS)
@@ -236,34 +236,26 @@ st.markdown(
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
-    /* COMPLETELY HIDE THE RIGHT-SIDE STREAMLIT TOOLBAR (FORK, GITHUB, MENU) */
-    header[data-testid="stHeader"] > div:first-child,
-    header[data-testid="stHeader"] > div:last-child {
-        display: none !important;
-        visibility: hidden !important;
-    }
-
-    /* REMOVE ANY BANNER OVERLAY TEXT */
-    header[data-testid="stHeader"]::after {
-        content: "" !important;
-        display: none !important;
-    }
-
-    /* KEEP HEADER TRANSPARENT */
+    /* PIN SIDEBAR TOGGLE BUTTON FIXED IN TOP LEFT SO IT NEVER DISAPPEARS */
     header[data-testid="stHeader"] {
         background: transparent !important;
-        height: 3.5rem !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 999999 !important;
     }
-
-    /* ENSURE SIDEBAR TOGGLE ICON (>>) STAYS FULLY VISIBLE & CLICKABLE ON THE LEFT */
+    [data-testid="stHeader"] > div:first-child {
+        visibility: hidden !important;
+    }
     [data-testid="stSidebarCollapseButton"] {
         visibility: visible !important;
-        display: flex !important;
+        display: block !important;
         color: #d4af37 !important;
         background-color: #161a22 !important;
-        border: 1px solid #d4af37 !important;
-        border-radius: 6px !important;
-        z-index: 999999 !important;
+        border: 2px solid #d4af37 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4) !important;
+        margin: 10px !important;
     }
     
     :root {
@@ -281,6 +273,16 @@ st.markdown(
         color: var(--text-main);
     }
 
+    .market-nav-bar {
+        background-color: #111418;
+        padding: 18px 20px;
+        border-bottom: 2px solid var(--gold-primary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
     .market-sub-banner {
         background: linear-gradient(135deg, #1a1e28 0%, #111418 100%);
         border: 1px solid var(--border-color);
@@ -374,6 +376,17 @@ st.markdown(
         border-right: 1px solid var(--border-color);
     }
     </style>
+
+    <div class="market-nav-bar">
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <div style="font-family: 'Cinzel', serif; color: var(--gold-primary); font-size: 2.2rem; font-weight: bold; line-height: 1; margin-bottom: 4px;">
+                ALFA SCENTS
+            </div>
+            <div style="font-family: 'Cinzel', serif; color: var(--gold-primary); font-size: 1.8rem; font-weight: bold; letter-spacing: 2px; line-height: 1;">
+                LUXURY BOUTIQUE <span style="font-size: 0.85rem; color: #9aa0a6; font-weight: normal; display: inline-block; margin-left: 8px; font-family: sans-serif; letter-spacing: 0px;">| Marketplace</span>
+            </div>
+        </div>
+    </div>
     """,
     unsafe_allow_html=True
 )
@@ -693,9 +706,9 @@ active_applepay = APPLEPAY_ACCOUNTS.get(current_ref_key, APPLEPAY_ACCOUNTS.get(D
 
 
 def send_order_emails(customer_name, customer_email, total_due, items_summary, payment_method, referral_tag, notification_recipient=""):
-    SENDER_EMAIL = "alfascents1@gmail.com"
+    SENDER_EMAIL = "alfascents@gmail.com"
     APP_PASSWORD = st.secrets.get("SMTP_PASSWORD", "dkif qgwv psyr qiig")
-    ADMIN_EMAIL = notification_recipient if notification_recipient else "alfascents1@gmail.com"
+    ADMIN_EMAIL = notification_recipient if notification_recipient else "alfascents@gmail.com"
     
     msg_customer = MIMEMultipart()
     msg_customer["From"] = SENDER_EMAIL
@@ -745,7 +758,7 @@ def send_order_emails(customer_name, customer_email, total_due, items_summary, p
 # AUTOMATED MARKETING CAMPAIGN FUNCTIONS
 # ==========================================
 def send_marketing_campaign_email(recipient_email, recipient_name, campaign_type):
-    SENDER_EMAIL = "alfascents1@gmail.com"
+    SENDER_EMAIL = "alfascents@gmail.com"
     APP_PASSWORD = st.secrets.get("SMTP_PASSWORD", "dkif qgwv psyr qiig")
     
     msg = MIMEMultipart()
@@ -1188,15 +1201,7 @@ elif selected_nav == "📦 Full Inventory":
                     referral_code="Ira Ray Thompson",
                 )
 
-                send_order_emails(
-                    customer_name=qr_cust_name,
-                    customer_email=qr_cust_contact,
-                    total_due=qr_final_total,
-                    items_summary=full_request_summary,
-                    payment_method=qr_payment_method,
-                    referral_tag="Ira Ray Thompson",
-                    notification_recipient="alfascents1@gmail.com"
-                )
+                send_order_emails(qr_cust_name, qr_cust_contact, qr_final_total, full_request_summary, qr_payment_method, "Ira Ray Thompson")
 
                 st.success(f"Success! Your request for {qr_total_qty} item(s) has been submitted for {qr_cust_name}.")
                 st.info(f"Please complete your settlement of **${qr_final_total:.2f}** via **{qr_payment_method}** using the payment details in the sidebar.")
@@ -1462,22 +1467,14 @@ elif selected_nav == "🛒 Checkout & Invoice":
                     items_str = ", ".join(summary_list)
                     combined_notes = f"Promo Code Used: {promo_code_input} (-${promo_discount_amount:.2f}). {notes}" if promo_discount_amount > 0 else notes
 
-                    custom_admin_email = st.session_state.get("restock_admin_email", "alfascents1@gmail.com")
+                    custom_admin_email = st.session_state.get("restock_admin_email", "")
 
                     save_order_to_db(
                         name, email, phone, address, items_str, total_qty, raw_subtotal, promo_discount_amount,
                         final_subtotal, payment_method, is_priority, combined_notes, st.session_state.cart, referral_code="Ira Ray Thompson"
                     )
                     
-                    send_order_emails(
-                        customer_name=name,
-                        customer_email=email,
-                        total_due=final_subtotal,
-                        items_summary=items_str,
-                        payment_method=payment_method,
-                        referral_tag="Ira Ray Thompson",
-                        notification_recipient=custom_admin_email
-                    )
+                    send_order_emails(name, email, final_subtotal, items_str, payment_method, "Ira Ray Thompson", notification_recipient=custom_admin_email)
 
                     st.success("Order successfully submitted and confirmation email notifications dispatched!")
                     
@@ -1544,19 +1541,6 @@ with st.sidebar:
             """, unsafe_allow_html=True)
 
         st.divider()
-        st.write("🛠️ **Admin & Inventory Controls**")
-
-        admin_passcode = st.text_input("Admin Passcode", type="password", key="sidebar_admin_passkey")
-        expected_admin_pass = st.secrets.get("ADMIN_PASSCODE", "Safe9uard-tf80")
-        
-        if admin_passcode == expected_admin_pass:
-            st.session_state["admin_unlocked"] = True
-            st.success("Admin Access Granted!")
-        elif admin_passcode != "":
-            st.session_state["admin_unlocked"] = False
-            st.error("Incorrect Passcode")
-
-        st.divider()
         if st.button("Clear App Cache", key="sidebar_clear_cache"):
             st.cache_data.clear()
             st.toast("Cache cleared!")
@@ -1565,9 +1549,9 @@ with st.sidebar:
             st.rerun()
 
 # ==========================================
-# ADMINISTRATIVE BACK OFFICE (PASSWORD PROTECTED)
+# ADMINISTRATIVE BACK OFFICE (PERMANENTLY VISIBLE AT BOTTOM)
 # ==========================================
-if st.session_state.get("admin_unlocked", False):
+if st.session_state.get("admin_unlocked", True):
     st.markdown("---")
     with st.container(border=True):
         st.header("⚙️ Administrative Back Office Suite")
@@ -1605,7 +1589,7 @@ if st.session_state.get("admin_unlocked", False):
             with st.form("admin_email_config_form"):
                 admin_notif_email = st.text_input(
                     "Back Office Notification Recipient Email Address",
-                    value=st.session_state.get("restock_admin_email", "alfascents1@gmail.com"),
+                    value=st.session_state.get("restock_admin_email", ""),
                     placeholder="Enter email address to receive new order confirmations (e.g. email@domain.com)"
                 )
                 save_email_cfg = st.form_submit_button("💾 Save Notification Email Address")
@@ -1627,7 +1611,7 @@ if st.session_state.get("admin_unlocked", False):
                     if not test_recipient:
                         st.error("Please enter a valid recipient email address.")
                     else:
-                        target_email = st.session_state.get("restock_admin_email", "alfascents1@gmail.com")
+                        target_email = st.session_state.get("restock_admin_email", test_recipient)
                         send_order_emails(test_customer_name, test_recipient, test_total, test_items, test_method, "Ira Ray Thompson", notification_recipient=target_email)
                         st.success(f"Test order confirmation email successfully sent to `{test_recipient}`!")
 
