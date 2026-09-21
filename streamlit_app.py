@@ -232,10 +232,19 @@ st.markdown(
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
-    /* HIDE STREAMLIT TOP HEADER TOOLBAR */
+    /* ENSURE SIDEBAR TOGGLE BUTTON IS ALWAYS VISIBLE AND STYLED IN GOLD */
     header[data-testid="stHeader"] {
-        visibility: hidden !important;
-        height: 0rem !important;
+        background: transparent !important;
+    }
+    [data-testid="stHeader"] > div:first-child {
+        visibility: hidden;
+    }
+    [data-testid="stSidebarCollapseButton"] {
+        visibility: visible !important;
+        color: #d4af37 !important;
+        background-color: #161a22 !important;
+        border: 1px solid rgba(212, 175, 55, 0.4) !important;
+        border-radius: 6px !important;
     }
     
     :root {
