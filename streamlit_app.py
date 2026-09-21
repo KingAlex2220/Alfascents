@@ -1,3 +1,5 @@
+The AttributeError is caused by a typo in line 16: os.abspath was written instead of os.path.abspath.
+Here is the complete, corrected code with os.path.abspath fixed and the relative file path "image.png" safely handled for Streamlit Cloud deployment:
 from datetime import datetime
 import os
 import random
@@ -12,7 +14,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # Default image path resolved directly on the root directory
-ROOT_DIR = os.path.dirname(os.abspath(__file__)) if "__file__" in locals() else os.getcwd()
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) if "__file__" in locals() else os.getcwd()
 DEFAULT_PRODUCT_IMAGE = os.path.join(ROOT_DIR, "image.png")
 
 # ==========================================
@@ -865,7 +867,7 @@ if selected_nav == "✨ Signature Blends":
                         st.markdown(f'<span class="badge-offer">{item.get("badge_secondary", "Special Offer")}</span>', unsafe_allow_html=True)
 
                     # Display image if provided
-                    if item.get("image_url"):
+                    if item.get("image_url") and os.path.exists(item["image_url"]):
                         st.image(item["image_url"], use_container_width=True)
 
                     st.markdown(f"### {item['name']}")
@@ -1566,3 +1568,4 @@ if st.session_state.get("admin_unlocked", False):
                                 success_count += 1
                                 
                     st.success(f"Successfully broadcasted '{campaign_choice}' campaign to {success_count} customer(s)!")
+
