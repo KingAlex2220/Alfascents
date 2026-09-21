@@ -1,5 +1,3 @@
-The AttributeError is caused by a typo in line 16: os.abspath was written instead of os.path.abspath.
-Here is the complete, corrected code with os.path.abspath fixed and the relative file path "image.png" safely handled for Streamlit Cloud deployment:
 from datetime import datetime
 import os
 import random
