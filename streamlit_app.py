@@ -15,9 +15,9 @@ from email.mime.multipart import MIMEMultipart
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) if "__file__" in locals() else os.getcwd()
 DEFAULT_PRODUCT_IMAGE = os.path.join(ROOT_DIR, "image.png")
 
-# Automatically unlock admin panel by default so Back Office stays permanently visible
+# Set admin panel locked by default requiring passcode entry in sidebar
 if "admin_unlocked" not in st.session_state:
-    st.session_state["admin_unlocked"] = True
+    st.session_state["admin_unlocked"] = False
 
 # ==========================================
 # FRAGRANCES DICTIONARY (CHANEL IMPRESSIONS)
@@ -1541,6 +1541,19 @@ with st.sidebar:
             """, unsafe_allow_html=True)
 
         st.divider()
+        st.write("🛠️ **Admin & Inventory Controls**")
+
+        admin_passcode = st.text_input("Admin Passcode", type="password", key="sidebar_admin_passkey")
+        expected_admin_pass = st.secrets.get("ADMIN_PASSCODE", "Safe9uard-tf80")
+        
+        if admin_passcode == expected_admin_pass:
+            st.session_state["admin_unlocked"] = True
+            st.success("Admin Access Granted!")
+        elif admin_passcode != "":
+            st.session_state["admin_unlocked"] = False
+            st.error("Incorrect Passcode")
+
+        st.divider()
         if st.button("Clear App Cache", key="sidebar_clear_cache"):
             st.cache_data.clear()
             st.toast("Cache cleared!")
@@ -1549,9 +1562,9 @@ with st.sidebar:
             st.rerun()
 
 # ==========================================
-# ADMINISTRATIVE BACK OFFICE (PERMANENTLY VISIBLE AT BOTTOM)
+# ADMINISTRATIVE BACK OFFICE (PASSWORD PROTECTED)
 # ==========================================
-if st.session_state.get("admin_unlocked", True):
+if st.session_state.get("admin_unlocked", False):
     st.markdown("---")
     with st.container(border=True):
         st.header("⚙️ Administrative Back Office Suite")
