@@ -236,17 +236,43 @@ st.markdown(
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
-    /* CLEAN HEADER STYLING - ALLOWS SIDEBAR TO BE FULLY VISIBLE & ACCESSIBLE */
+    /* HIDE TOP-RIGHT TOOLBAR (FORK, GITHUB, TRIPLE DOT MENU) AND PLACE BANNER */
     header[data-testid="stHeader"] {
         background: transparent !important;
+        height: 3.5rem !important;
     }
     
+    /* COVER TOP-RIGHT STREAMLIT TOOLBAR BUTTONS WITH A LUXURY GOLD BANNER */
+    header[data-testid="stHeader"] > div:last-child {
+        display: none !important;
+    }
+    
+    header[data-testid="stHeader"]::after {
+        content: "✨ ALFA SCENTS LUXURY BOUTIQUE ✨";
+        position: absolute;
+        top: 8px;
+        right: 15px;
+        background: linear-gradient(135deg, #161a22 0%, #0d0f12 100%);
+        color: #d4af37;
+        border: 1px solid #d4af37;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-family: 'Cinzel', serif;
+        font-size: 0.75rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        z-index: 999999;
+    }
+    
+    /* ENSURE SIDEBAR COLLAPSE TOGGLE REMAINS FULLY VISIBLE & CLICKABLE */
     [data-testid="stSidebarCollapseButton"] {
         visibility: visible !important;
         color: #d4af37 !important;
         background-color: #161a22 !important;
         border: 1px solid #d4af37 !important;
         border-radius: 6px !important;
+        z-index: 999999 !important;
     }
     
     :root {
