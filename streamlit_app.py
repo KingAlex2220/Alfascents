@@ -236,36 +236,34 @@ st.markdown(
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
-    /* CLEAN TRANSPARENT HEADER - ENSURES SIDEBAR ICON IS FULLY UNCOVERED & VISIBLE */
+    /* MAKE HEADER TRANSPARENT & PREVENT IT FROM BLOCKING CLICK EVENTS */
     header[data-testid="stHeader"] {
         background: transparent !important;
         height: 3.5rem !important;
+        pointer-events: none !important;
     }
 
-    /* HIDE ONLY THE RIGHT-HAND SIDE TOOLBAR ITEMS (FORK, GITHUB, TRIPLE-DOT MENU) */
+    /* HIDE ONLY RIGHT SIDE STREAMLIT TOOLBAR (FORK, GITHUB, TRIPLE DOT MENU) */
     header[data-testid="stHeader"] > div:first-child,
     header[data-testid="stHeader"] > div:last-child {
         display: none !important;
         visibility: hidden !important;
     }
 
-    /* REMOVE ANY OVERLAY BANNER CONTENT */
-    header[data-testid="stHeader"]::after {
-        content: "" !important;
-        display: none !important;
-    }
-
-    /* SIDEBAR COLLAPSE BUTTON STYLING (ON THE LEFT) */
-    [data-testid="stSidebarCollapseButton"] {
+    /* FORCE SIDEBAR TOGGLE BUTTONS TO BE CLICKABLE AND HIGH VISIBILITY */
+    [data-testid="stSidebarCollapseButton"],
+    [data-testid="stSidebarExpandButton"] {
+        pointer-events: auto !important;
         visibility: visible !important;
         display: flex !important;
         color: #d4af37 !important;
         background-color: #161a22 !important;
         border: 1px solid #d4af37 !important;
         border-radius: 6px !important;
-        z-index: 999999 !important;
+        z-index: 9999999 !important;
+        position: relative !important;
     }
-    
+
     :root {
         --bg-color: #0d0f12;
         --card-bg: #161a22;
