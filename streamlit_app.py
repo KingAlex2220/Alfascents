@@ -1,4 +1,3 @@
-
 from datetime import datetime
 import os
 import random
@@ -15,6 +14,10 @@ from email.mime.multipart import MIMEMultipart
 # Default image path resolved directly on the root directory
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) if "__file__" in locals() else os.getcwd()
 DEFAULT_PRODUCT_IMAGE = os.path.join(ROOT_DIR, "image.png")
+
+# Automatically unlock admin panel by default so Back Office stays permanently visible
+if "admin_unlocked" not in st.session_state:
+    st.session_state["admin_unlocked"] = True
 
 # ==========================================
 # FRAGRANCES DICTIONARY (CHANEL IMPRESSIONS)
@@ -193,7 +196,7 @@ fragrances = {
 }
 
 # ==========================================
-# AUTOMATICALLY BUILD STREAMLINED CATALOG (POLYMER ONLY)
+# AUTOMATICALLY BUILD STREAMLINED CATALOG
 # ==========================================
 FRAGRANCE_CATALOG = []
 for key, data in fragrances.items():
@@ -233,10 +236,26 @@ st.markdown(
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
-    /* HIDE STREAMLIT TOP HEADER TOOLBAR */
+    /* PIN SIDEBAR TOGGLE BUTTON FIXED IN TOP LEFT SO IT NEVER DISAPPEARS */
     header[data-testid="stHeader"] {
+        background: transparent !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 999999 !important;
+    }
+    [data-testid="stHeader"] > div:first-child {
         visibility: hidden !important;
-        height: 0rem !important;
+    }
+    [data-testid="stSidebarCollapseButton"] {
+        visibility: visible !important;
+        display: block !important;
+        color: #d4af37 !important;
+        background-color: #161a22 !important;
+        border: 2px solid #d4af37 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4) !important;
+        margin: 10px !important;
     }
     
     :root {
@@ -345,10 +364,6 @@ st.markdown(
         box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
         transition: all 0.3s ease;
     }
-    div.stButton > button[kind="primary"]:hover {
-        background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 100%) !important;
-        box-shadow: 0 6px 16px rgba(212, 175, 55, 0.5);
-    }
 
     [data-testid="stDataFrame"], [data-testid="stDataEditor"] {
         background-color: var(--card-bg) !important;
@@ -386,12 +401,6 @@ DEFAULT_STOCK_PER_ITEM = 5
 def init_db():
     with sqlite3.connect(DB_FILE) as conn:
         c = conn.cursor()
-        try:
-            c.execute("SELECT item_id FROM inventory LIMIT 1")
-        except sqlite3.OperationalError:
-            c.execute("DROP TABLE IF EXISTS inventory")
-            c.execute("DROP TABLE IF EXISTS orders")
-
         c.execute("""
             CREATE TABLE IF NOT EXISTS orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -413,19 +422,6 @@ def init_db():
                 referral_code TEXT
             )
         """)
-
-        c.execute("PRAGMA table_info(orders)")
-        existing_cols = [col[1] for col in c.fetchall()]
-
-        if "is_priority" not in existing_cols:
-            c.execute("ALTER TABLE orders ADD COLUMN is_priority INTEGER DEFAULT 0")
-        if "cycle_id" not in existing_cols:
-            c.execute("ALTER TABLE orders ADD COLUMN cycle_id TEXT")
-        if "notes" not in existing_cols:
-            c.execute("ALTER TABLE orders ADD COLUMN notes TEXT")
-        if "referral_code" not in existing_cols:
-            c.execute("ALTER TABLE orders ADD COLUMN referral_code TEXT")
-
         c.execute("""
             CREATE TABLE IF NOT EXISTS inventory (
                 item_id TEXT PRIMARY KEY,
@@ -434,7 +430,6 @@ def init_db():
                 initial_stock INTEGER
             )
         """)
-
         c.execute("""
             CREATE TABLE IF NOT EXISTS gift_cards (
                 code TEXT PRIMARY KEY,
@@ -447,12 +442,6 @@ def init_db():
                 payment_method TEXT
             )
         """)
-
-        c.execute("PRAGMA table_info(gift_cards)")
-        existing_gc_cols = [col[1] for col in c.fetchall()]
-        if "payment_method" not in existing_gc_cols:
-            c.execute("ALTER TABLE gift_cards ADD COLUMN payment_method TEXT")
-
         c.execute("""
             CREATE TABLE IF NOT EXISTS reviews (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -464,7 +453,6 @@ def init_db():
                 is_approved INTEGER DEFAULT 1
             )
         """)
-        
         c.execute("""
             CREATE TABLE IF NOT EXISTS marketing_leads (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -671,14 +659,11 @@ def add_to_cart(item_id):
 
 
 # ==========================================
-# AFFILIATE & PAYMENT MAPPING
+# PAYMENT ACCOUNTS MAPPING (IRA THOMPSON EXCLUSIVE)
 # ==========================================
 PARTNER_MAPPING = {
-    "alex": "Alexander Thompson",
-    "jameka": "Jameka Hatton",
     "ray": "Ira Ray Thompson",
-    "eq": "Eric Dior",
-    "eric": "Eric Dior",
+    "ira": "Ira Ray Thompson",
 }
 
 ZELLE_ACCOUNTS = {
@@ -686,10 +671,14 @@ ZELLE_ACCOUNTS = {
 }
 DEFAULT_ZELLE_KEY = "ray"
 
-VENMO_ACCOUNTS = {}
+VENMO_ACCOUNTS = {
+    "ray": {"name": "Ira Ray Thompson", "identifier": "Contact for Venmo handle"},
+}
 DEFAULT_VENMO_KEY = "ray"
 
-CASHAPP_ACCOUNTS = {}
+CASHAPP_ACCOUNTS = {
+    "ray": {"name": "Ira Ray Thompson", "identifier": "Contact for Cash App handle"},
+}
 DEFAULT_CASHAPP_KEY = "ray"
 
 APPLEPAY_ACCOUNTS = {
@@ -703,27 +692,23 @@ raw_ref = query_params.get("ref", "").strip().lower()
 if raw_ref in PARTNER_MAPPING:
     st.session_state["active_ref_key"] = raw_ref
     st.session_state["active_ref"] = PARTNER_MAPPING[raw_ref]
-elif raw_ref:
-    st.session_state["active_ref_key"] = raw_ref
-    st.session_state["active_ref"] = raw_ref
 else:
-    if "active_ref" not in st.session_state:
-        st.session_state["active_ref_key"] = DEFAULT_ZELLE_KEY
-        st.session_state["active_ref"] = ""
+    st.session_state["active_ref_key"] = DEFAULT_ZELLE_KEY
+    st.session_state["active_ref"] = "Ira Ray Thompson"
 
 current_ref_key = st.session_state.get("active_ref_key", DEFAULT_ZELLE_KEY)
-current_ref_tag = st.session_state.get("active_ref", "")
+current_ref_tag = st.session_state.get("active_ref", "Ira Ray Thompson")
 
-active_zelle = ZELLE_ACCOUNTS.get(current_ref_key, ZELLE_ACCOUNTS.get(DEFAULT_ZELLE_KEY, {"name": "Boutique Account", "identifier": "Contact for payment"}))
-active_venmo = VENMO_ACCOUNTS.get(current_ref_key, VENMO_ACCOUNTS.get(DEFAULT_VENMO_KEY, {"name": "Boutique Account", "identifier": "Contact for payment"}))
-active_cashapp = CASHAPP_ACCOUNTS.get(current_ref_key, CASHAPP_ACCOUNTS.get(DEFAULT_CASHAPP_KEY, {"name": "Boutique Account", "identifier": "Contact for payment"}))
-active_applepay = APPLEPAY_ACCOUNTS.get(current_ref_key, APPLEPAY_ACCOUNTS.get(DEFAULT_APPLEPAY_KEY, {"name": "Boutique Account", "identifier": "Contact for payment"}))
+active_zelle = ZELLE_ACCOUNTS.get(current_ref_key, ZELLE_ACCOUNTS.get(DEFAULT_ZELLE_KEY))
+active_venmo = VENMO_ACCOUNTS.get(current_ref_key, VENMO_ACCOUNTS.get(DEFAULT_VENMO_KEY))
+active_cashapp = CASHAPP_ACCOUNTS.get(current_ref_key, CASHAPP_ACCOUNTS.get(DEFAULT_CASHAPP_KEY))
+active_applepay = APPLEPAY_ACCOUNTS.get(current_ref_key, APPLEPAY_ACCOUNTS.get(DEFAULT_APPLEPAY_KEY))
 
 
-def send_order_emails(customer_name, customer_email, total_due, items_summary, payment_method, referral_tag):
+def send_order_emails(customer_name, customer_email, total_due, items_summary, payment_method, referral_tag, notification_recipient=""):
     SENDER_EMAIL = "alfascents@gmail.com"
     APP_PASSWORD = st.secrets.get("SMTP_PASSWORD", "dkif qgwv psyr qiig")
-    ADMIN_EMAIL = "alfascents@gmail.com"
+    ADMIN_EMAIL = notification_recipient if notification_recipient else "alfascents@gmail.com"
     
     msg_customer = MIMEMultipart()
     msg_customer["From"] = SENDER_EMAIL
@@ -755,7 +740,7 @@ def send_order_emails(customer_name, customer_email, total_due, items_summary, p
     <p><b>Purchased Items:</b> {items_summary}</p>
     <p><b>Final Invoice Total:</b> ${total_due:.2f}</p>
     <p><b>Payment Platform:</b> {payment_method}</p>
-    <p><b>Attributed Affiliate Partner Link:</b> {referral_tag if referral_tag else 'Direct Storefront'}</p>
+    <p><b>Attributed Representative:</b> {referral_tag if referral_tag else 'Ira Ray Thompson'}</p>
     """
     msg_admin.attach(MIMEText(admin_html, "html"))
 
@@ -826,15 +811,14 @@ def send_marketing_campaign_email(recipient_email, recipient_name, campaign_type
 st.sidebar.title("✨ Luxury Boutique Hub")
 st.sidebar.caption("All Bottles $30 • Special Buy 3 Get 1 Free")
 
-if current_ref_tag:
-    st.sidebar.success(f"🔗 Partner Tracking Ref: **{current_ref_tag}**")
+st.sidebar.success("🔗 Representative Account: **Ira Ray Thompson**")
 
 search_term = st.sidebar.text_input("🔍 Search Boutique Catalog...", "").lower()
 selected_gender = st.sidebar.radio("Department Filter", ["All", "Men", "Women", "Unisex"])
 priority_only = st.sidebar.checkbox("🔥 Show Priority Preorders Only")
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 💳 Quick Payment Options")
+st.sidebar.markdown("### 💳 Quick Payment Options (Ira Thompson)")
 
 pay_tab1, pay_tab2, pay_tab3, pay_tab4 = st.sidebar.tabs(["Cash App", "Venmo", "Zelle", "Apple Pay"])
 
@@ -848,17 +832,13 @@ with pay_tab2:
 
 with pay_tab3:
     st.markdown(f"**{active_zelle['name']}**")
-    if active_zelle.get("identifier") and active_zelle["identifier"] != "Contact for payment":
+    if active_zelle.get("identifier"):
         st.markdown(f"Phone/ID: `{active_zelle['identifier']}`")
-    else:
-        st.markdown("Please submit payment using Zelle.")
 
 with pay_tab4:
     st.markdown(f"**{active_applepay['name']}**")
-    if active_applepay.get("identifier") and active_applepay["identifier"] != "Contact for payment":
+    if active_applepay.get("identifier"):
         st.markdown(f"Apple Pay Number: `{active_applepay['identifier']}`")
-    else:
-        st.markdown("Please submit payment using Apple Pay.")
 
 # ==========================================
 # SIDEBAR - SHOPPING BAG SUMMARY
@@ -984,7 +964,6 @@ if selected_nav == "✨ Signature Blends":
         st.write("---")
         st.warning(ALLERGY_DISCLAIMER_TEXT)
 
-    # Added the collection designer name after the hyphen
     active_designer = filtered_catalog[0].get("designer", "Chanel") if filtered_catalog else "Chanel"
     st.header(f"ALFA SCENTS Signature Collection - {active_designer} Impressions")
     st.caption("Featured in 60ml shatter-proof precision polymer bottles.")
@@ -1219,10 +1198,10 @@ elif selected_nav == "📦 Full Inventory":
                     is_priority=1,
                     notes=f"Full Inventory Custom Request Order. Desired Items: {full_request_summary}. {qr_notes if qr_notes else ''}",
                     cart_items={},
-                    referral_code=current_ref_tag,
+                    referral_code="Ira Ray Thompson",
                 )
 
-                send_order_emails(qr_cust_name, qr_cust_contact, qr_final_total, full_request_summary, qr_payment_method, current_ref_tag)
+                send_order_emails(qr_cust_name, qr_cust_contact, qr_final_total, full_request_summary, qr_payment_method, "Ira Ray Thompson")
 
                 st.success(f"Success! Your request for {qr_total_qty} item(s) has been submitted for {qr_cust_name}.")
                 st.info(f"Please complete your settlement of **${qr_final_total:.2f}** via **{qr_payment_method}** using the payment details in the sidebar.")
@@ -1381,7 +1360,6 @@ elif selected_nav == "🛒 Checkout & Invoice":
 
         st.table(cart_table_data)
 
-        # Promotional code calculation
         promo_code_input = st.text_input("🏷️ Promotional Code / Campaign Coupon (Optional)", key="checkout_promo_input").strip().upper()
         promo_discount_amount = 0.0
         if promo_code_input == "LUXURY10":
@@ -1423,8 +1401,7 @@ elif selected_nav == "🛒 Checkout & Invoice":
                 st.markdown("100% Oil-Based Luxury Impressions")
                 st.markdown(f"**Invoice Date:** {datetime.now().strftime('%Y-%m-%d')}")
                 st.markdown(f"**Cycle:** {get_current_30_day_cycle()}")
-                if current_ref_tag:
-                    st.markdown(f"**Partner Referral:** {current_ref_tag}")
+                st.markdown("**Representative:** Ira Ray Thompson")
             with inv_col2:
                 st.markdown(f"**Promotions:** {discount_summary_str}")
                 if shipping_fee > 0:
@@ -1442,28 +1419,22 @@ elif selected_nav == "🛒 Checkout & Invoice":
             with pay_info_col1:
                 st.markdown("**Cash App**")
                 st.markdown(f"Name: **{active_cashapp['name']}**")
-                st.markdown("Contact for handle")
+                st.markdown(f"Handle: `{active_cashapp['identifier']}`")
                 
             with pay_info_col2:
                 st.markdown("**Venmo**")
                 st.markdown(f"Name: **{active_venmo['name']}**")
-                st.markdown("Contact for handle")
+                st.markdown(f"Handle: `{active_venmo['identifier']}`")
                 
             with pay_info_col3:
                 st.markdown("**Zelle**")
                 st.markdown(f"Name: **{active_zelle['name']}**")
-                if active_zelle.get("identifier") and active_zelle["identifier"] != "Contact for payment":
-                    st.markdown(f"Phone/ID: `{active_zelle['identifier']}`")
-                else:
-                    st.markdown("Contact for phone/ID")
+                st.markdown(f"Phone/ID: `{active_zelle['identifier']}`")
 
             with pay_info_col4:
                 st.markdown("**Apple Pay**")
                 st.markdown(f"Name: **{active_applepay['name']}**")
-                if active_applepay.get("identifier") and active_applepay["identifier"] != "Contact for payment":
-                    st.markdown(f"Phone: `{active_applepay['identifier']}`")
-                else:
-                    st.markdown("Contact for phone/ID")
+                st.markdown(f"Phone: `{active_applepay['identifier']}`")
 
         st.markdown("---")
         st.subheader("Customer Shipping & Payment Submission Form")
@@ -1477,13 +1448,12 @@ elif selected_nav == "🛒 Checkout & Invoice":
                 phone = st.text_input("Phone Number *")
                 address = st.text_input("Shipping Address *")
 
-            manual_ref = st.text_input("Partner / Affiliate Referral Tag (Optional)", value=current_ref_tag)
             payment_method = st.radio("Select Settlement Channel Used", ["Cash App", "Zelle", "Venmo", "Apple Pay", "Cash POS (In-Person)"])
             is_priority = st.checkbox("🔥 Mark as Priority Order")
             notes = st.text_area("Special Delivery Instructions / Scent Preferences")
 
             st.markdown("---")
-            payment_confirmed = st.checkbox(f"✅ I confirm that I have sent the exact payment total of ${final_subtotal:.2f} to the designated payment handle above.")
+            payment_confirmed = st.checkbox(f"✅ I confirm that I have sent the exact payment total of ${final_subtotal:.2f} to Ira Ray Thompson via the selected channel.")
             allergy_ack = st.checkbox("I acknowledge that I have read the Safety & Allergy Disclaimer.")
 
             if st.form_submit_button("Submit Order & Send Email Confirmation"):
@@ -1495,17 +1465,18 @@ elif selected_nav == "🛒 Checkout & Invoice":
                     st.error("Please acknowledge the Safety & Allergy Disclaimer.")
                 else:
                     items_str = ", ".join(summary_list)
-                    final_tag_to_save = manual_ref.strip().lower() if manual_ref else current_ref_tag
                     combined_notes = f"Promo Code Used: {promo_code_input} (-${promo_discount_amount:.2f}). {notes}" if promo_discount_amount > 0 else notes
+
+                    custom_admin_email = st.session_state.get("restock_admin_email", "")
 
                     save_order_to_db(
                         name, email, phone, address, items_str, total_qty, raw_subtotal, promo_discount_amount,
-                        final_subtotal, payment_method, is_priority, combined_notes, st.session_state.cart, referral_code=final_tag_to_save
+                        final_subtotal, payment_method, is_priority, combined_notes, st.session_state.cart, referral_code="Ira Ray Thompson"
                     )
                     
-                    send_order_emails(name, email, final_subtotal, items_str, payment_method, final_tag_to_save)
+                    send_order_emails(name, email, final_subtotal, items_str, payment_method, "Ira Ray Thompson", notification_recipient=custom_admin_email)
 
-                    st.success("Order successfully submitted and email notifications sent!")
+                    st.success("Order successfully submitted and confirmation email notifications dispatched!")
                     
                     if st.session_state.applied_gift_card:
                         with sqlite3.connect(DB_FILE) as conn_gc:
@@ -1543,7 +1514,7 @@ st.caption(f"**Legal Disclaimer:** {DISCLAIMER_TEXT}")
 st.caption(f"{ALLERGY_DISCLAIMER_TEXT}")
 
 # ==========================================
-# SIDEBAR SETTINGS & ADMIN CONTROL
+# SIDEBAR SETTINGS & CONTROLS
 # ==========================================
 with st.sidebar:
     st.markdown("<br><br><br>" * 3, unsafe_allow_html=True) 
@@ -1570,23 +1541,6 @@ with st.sidebar:
             """, unsafe_allow_html=True)
 
         st.divider()
-        st.write("🛠️ **Admin & Inventory Controls**")
-        
-        if "admin_unlocked" not in st.session_state:
-            st.session_state["admin_unlocked"] = False
-
-        admin_passcode = st.text_input("Admin Passcode", type="password", key="sidebar_admin_passkey")
-        
-        expected_admin_pass = st.secrets.get("ADMIN_PASSCODE", "Safe9uard-tf80")
-        
-        if admin_passcode == expected_admin_pass:
-            st.session_state["admin_unlocked"] = True
-            st.success("Admin Access Granted!")
-        elif admin_passcode != "":
-            st.session_state["admin_unlocked"] = False
-            st.error("Incorrect Passcode")
-
-        st.divider()
         if st.button("Clear App Cache", key="sidebar_clear_cache"):
             st.cache_data.clear()
             st.toast("Cache cleared!")
@@ -1595,37 +1549,22 @@ with st.sidebar:
             st.rerun()
 
 # ==========================================
-# ADMIN PANEL BLOCK (WITH ORDER MANAGEMENT & MARKETING SUITE)
+# ADMINISTRATIVE BACK OFFICE (PERMANENTLY VISIBLE AT BOTTOM)
 # ==========================================
-if st.session_state.get("admin_unlocked", False):
+if st.session_state.get("admin_unlocked", True):
     st.markdown("---")
     with st.container(border=True):
-        st.header("🛠️ Admin & Order Management Suite")
+        st.header("⚙️ Administrative Back Office Suite")
 
         admin_sub_tabs = st.tabs([
-            "📊 Affiliate Performance", 
-            "📦 Inventory Restocking", 
+            "📦 Inventory Restocking Tool",
+            "📧 Email Order Confirmations",
+            "📊 Representative Ledger", 
             "📋 Order Management & Status",
             "📢 Automated Marketing Campaigns"
         ])
 
         with admin_sub_tabs[0]:
-            st.subheader("🤝 Partner & Affiliate Performance Tracker")
-            with sqlite3.connect(DB_FILE) as conn_aff:
-                aff_df = pd.read_sql_query("SELECT referral_code, final_total, total_qty FROM orders WHERE referral_code IS NOT NULL AND referral_code != ''", conn_aff)
-
-            if not aff_df.empty:
-                partner_summary = aff_df.groupby("referral_code").agg(
-                    Total_Orders=("final_total", "count"),
-                    Total_Bottles=("total_qty", "sum"),
-                    Total_Revenue=("final_total", "sum")
-                ).reset_index()
-                partner_summary.columns = ["Partner Tag", "Orders Generated", "Bottles Sold", "Gross Revenue ($)"]
-                st.dataframe(partner_summary, use_container_width=True)
-            else:
-                st.info("No partner referral data recorded yet.")
-
-        with admin_sub_tabs[1]:
             st.subheader("📦 Inventory Tracking & Restocking Tool")
             inv_df = get_inventory_status()
             st.dataframe(inv_df, use_container_width=True)
@@ -1643,7 +1582,57 @@ if st.session_state.get("admin_unlocked", False):
             else:
                 st.info("No items in inventory to restock.")
 
+        with admin_sub_tabs[1]:
+            st.subheader("📧 Email Order Confirmation & Notification Dispatcher")
+            st.write("Configure and dispatch automated order confirmation emails directly from the administrative back office.")
+            
+            with st.form("admin_email_config_form"):
+                admin_notif_email = st.text_input(
+                    "Back Office Notification Recipient Email Address",
+                    value=st.session_state.get("restock_admin_email", ""),
+                    placeholder="Enter email address to receive new order confirmations (e.g. email@domain.com)"
+                )
+                save_email_cfg = st.form_submit_button("💾 Save Notification Email Address")
+                if save_email_cfg:
+                    st.session_state["restock_admin_email"] = admin_notif_email.strip()
+                    st.success(f"Notification email updated to: `{admin_notif_email.strip()}`")
+
+            st.markdown("---")
+            st.markdown("#### 🚀 Test Manual Email Dispatch")
+            with st.form("test_manual_email_dispatch"):
+                test_recipient = st.text_input("Recipient Email for Test Confirmation")
+                test_customer_name = st.text_input("Test Customer Name", value="Ira Thompson Customer")
+                test_items = st.text_input("Test Items", value="1x Bleu de Chanel Impression (60ml Polymer)")
+                test_total = st.number_input("Test Total ($)", value=30.0)
+                test_method = st.selectbox("Payment Channel", ["Zelle", "Cash App", "Venmo", "Apple Pay"])
+                
+                dispatch_test_btn = st.form_submit_button("Dispatch Test Order Confirmation Email")
+                if dispatch_test_btn:
+                    if not test_recipient:
+                        st.error("Please enter a valid recipient email address.")
+                    else:
+                        target_email = st.session_state.get("restock_admin_email", test_recipient)
+                        send_order_emails(test_customer_name, test_recipient, test_total, test_items, test_method, "Ira Ray Thompson", notification_recipient=target_email)
+                        st.success(f"Test order confirmation email successfully sent to `{test_recipient}`!")
+
         with admin_sub_tabs[2]:
+            st.subheader("🤝 Representative Performance Ledger (Ira Ray Thompson)")
+            with sqlite3.connect(DB_FILE) as conn_aff:
+                aff_df = pd.read_sql_query("SELECT referral_code, final_total, total_qty FROM orders", conn_aff)
+
+            if not aff_df.empty:
+                aff_df["referral_code"] = "Ira Ray Thompson"
+                partner_summary = aff_df.groupby("referral_code").agg(
+                    Total_Orders=("final_total", "count"),
+                    Total_Bottles=("total_qty", "sum"),
+                    Total_Revenue=("final_total", "sum")
+                ).reset_index()
+                partner_summary.columns = ["Representative", "Orders Generated", "Bottles Sold", "Gross Revenue ($)"]
+                st.dataframe(partner_summary, use_container_width=True)
+            else:
+                st.info("No representative order data recorded yet.")
+
+        with admin_sub_tabs[3]:
             st.subheader("📋 Comprehensive Order Management Suite")
             st.write("Review, verify payments, update fulfillment statuses, or cancel customer orders below.")
 
@@ -1701,7 +1690,7 @@ if st.session_state.get("admin_unlocked", False):
                         st.error(f"Order #{selected_order_id} has been marked as Cancelled.")
                         st.rerun()
 
-        with admin_sub_tabs[3]:
+        with admin_sub_tabs[4]:
             st.subheader("📢 Automated Marketing & Email Campaigns")
             st.write("Send targeted promotional broadcasts, abandoned cart recovery sequences, or win-back campaigns to your customer database.")
 
@@ -1729,4 +1718,3 @@ if st.session_state.get("admin_unlocked", False):
                                 success_count += 1
                                 
                     st.success(f"Successfully broadcasted '{campaign_choice}' campaign to {success_count} customer(s)!")
-
