@@ -983,8 +983,9 @@ if selected_nav == "✨ Signature Blends":
         st.write("---")
         st.warning(ALLERGY_DISCLAIMER_TEXT)
 
-    # 1. Added hyphen to header
-    st.header("ALFA SCENTS Signature Collection -")
+    # Added the collection designer name after the hyphen
+    active_designer = filtered_catalog[0].get("designer", "Chanel") if filtered_catalog else "Chanel"
+    st.header(f"ALFA SCENTS Signature Collection - {active_designer} Impressions")
     st.caption("Featured in 60ml shatter-proof precision polymer bottles.")
 
     if total_qty > 0:
@@ -1027,7 +1028,6 @@ if selected_nav == "✨ Signature Blends":
                     with badge_col2:
                         st.markdown(f'<span class="badge-offer">{item.get("badge_secondary", "Special Offer")}</span>', unsafe_allow_html=True)
 
-                    # 2. Display designer name & impression explicitly in product title
                     designer_name = item.get("designer", "Chanel")
                     st.markdown(f"### {item['name']} ({designer_name} Collection) Impression")
                     st.caption(f"**{item['gender']}'s** • {item['category']}")
