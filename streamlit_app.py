@@ -236,17 +236,27 @@ st.markdown(
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
-    /* CLEAN HEADER STYLING - ALLOWS SIDEBAR TO BE FULLY VISIBLE & ACCESSIBLE */
+    /* HIDE ENTIRE TOP RIGHT TOOLBAR AREA (FORK, GITHUB, TRIPLE-DOT MENU) */
+    header[data-testid="stHeader"] > div:first-child {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* KEEP HEADER TRANSPARENT BUT ENSURE ACCESSIBILITY */
     header[data-testid="stHeader"] {
         background: transparent !important;
+        height: 3.5rem !important;
     }
-    
+
+    /* ENSURE SIDEBAR TOGGLE ICON (>>) STAYS FULLY VISIBLE & CLICKABLE */
     [data-testid="stSidebarCollapseButton"] {
         visibility: visible !important;
+        display: flex !important;
         color: #d4af37 !important;
         background-color: #161a22 !important;
         border: 1px solid #d4af37 !important;
         border-radius: 6px !important;
+        z-index: 999999 !important;
     }
     
     :root {
