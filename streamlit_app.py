@@ -11,6 +11,10 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+# Default image path resolved directly on the root directory
+ROOT_DIR = os.path.dirname(os.abspath(__file__)) if "__file__" in locals() else os.getcwd()
+DEFAULT_PRODUCT_IMAGE = os.path.join(ROOT_DIR, "image.png")
+
 # ==========================================
 # FRAGRANCES DICTIONARY (EMPTY FOR NEW COLLECTION)
 # ==========================================
@@ -32,36 +36,25 @@ fragrances = {
 }
 
 # ==========================================
-# AUTOMATICALLY BUILD STREAMLINED CATALOG
+# AUTOMATICALLY BUILD STREAMLINED CATALOG (POLYMER ONLY)
 # ==========================================
 FRAGRANCE_CATALOG = []
 for key, data in fragrances.items():
     sp = data.get("scent_profile", {})
+
     FRAGRANCE_CATALOG.append({
-        "id": f"{key}_travel",
-        "name": f"{data['name']} (Travel Safe Edition)",
+        "id": f"{key}_polymer",
+        "name": data['name'],
         "gender": data["gender"],
         "badge_primary": data["badge_primary"],
-        "badge_secondary": "Travel Edition",
+        "badge_secondary": data.get("badge_secondary", "60ml Polymer"),
         "category": f"60ml Shatter-Proof Precision Polymer • Impression of {data['impression_of']}",
         "price": 30.0,
-        "edition_type": "Travel",
+        "edition_type": "Precision Polymer",
         "bottle_type": "60ml Shatter-Proof Precision Polymer",
-        "notes": f"60ml Featherlight Precision-Crafted Polymer (Shatter-Proof Travel Bottle). {data['description']}",
-        "scent_profile": sp
-    })
-    FRAGRANCE_CATALOG.append({
-        "id": key,
-        "name": f"{data['name']} (Standard Glass Edition)",
-        "gender": data["gender"],
-        "badge_primary": data["badge_primary"],
-        "badge_secondary": data["badge_secondary"],
-        "category": f"50ml Classic Glass Bottle • Impression of {data['impression_of']}",
-        "price": 30.0,
-        "edition_type": "Standard",
-        "bottle_type": "50ml Classic Glass Bottle",
-        "notes": f"50ml Luminous Glass Bottle. {data['description']}",
-        "scent_profile": sp
+        "notes": f"60ml Featherlight Precision-Crafted Polymer (Shatter-Proof Bottle). {data['description']}",
+        "scent_profile": sp,
+        "image_url": DEFAULT_PRODUCT_IMAGE
     })
 
 # ==========================================
@@ -642,7 +635,7 @@ def send_marketing_campaign_email(recipient_email, recipient_name, campaign_type
         msg["Subject"] = "✨ Discover Our Latest Impressions at ALFA SCENTS"
         html_content = f"""
         <h3>Hello {recipient_name},</h3>
-        <p>It's been a while since your last sensory journey with ALFA SCENTS. Explore our newest 60ml Shatter-Proof Precision Polymer Travel Editions and classic glass blends!</p>
+        <p>It's been a while since your last sensory journey with ALFA SCENTS. Explore our 60ml Shatter-Proof Precision Polymer Editions!</p>
         <p><b>Special Offer:</b> Buy 3 bottles and pick a 4th bottle for free across our entire catalog.</p>
         <p><a href="https://alfascents.streamlit.app/" style="background: #d4af37; color: #000; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px;">Explore Collection</a></p>
         """
@@ -680,7 +673,6 @@ if current_ref_tag:
 
 search_term = st.sidebar.text_input("🔍 Search Boutique Catalog...", "").lower()
 selected_gender = st.sidebar.radio("Department Filter", ["All", "Men", "Women", "Unisex"])
-edition_filter = st.selectbox("Bottle Edition Selector", ["Travel Safe Edition (60ml Precision Polymer)", "Standard Edition (50ml Glass)", "All Bottles"], index=0)
 priority_only = st.sidebar.checkbox("🔥 Show Priority Preorders Only")
 
 st.sidebar.markdown("---")
@@ -769,11 +761,6 @@ filtered_catalog = FRAGRANCE_CATALOG
 if selected_gender != "All":
     filtered_catalog = [x for x in filtered_catalog if x["gender"] == selected_gender]
 
-if edition_filter == "Travel Safe Edition (60ml Precision Polymer)":
-    filtered_catalog = [x for x in filtered_catalog if x.get("edition_type") == "Travel"]
-elif edition_filter == "Standard Edition (50ml Glass)":
-    filtered_catalog = [x for x in filtered_catalog if x.get("edition_type") == "Standard"]
-
 if search_term:
     filtered_catalog = [
         x for x in filtered_catalog
@@ -840,7 +827,7 @@ if selected_nav == "✨ Signature Blends":
         st.warning(ALLERGY_DISCLAIMER_TEXT)
 
     st.header("ALFA SCENTS Signature Collection")
-    st.caption("Explore our shatter-proof 60ml precision polymer travel bottles or classic 50ml glass bottles.")
+    st.caption("Featured in 60ml shatter-proof precision polymer bottles.")
 
     if total_qty > 0:
         c_banner1, c_banner2 = st.columns([3, 1])
@@ -876,6 +863,10 @@ if selected_nav == "✨ Signature Blends":
                         st.markdown(f'<span class="badge-signature">{item.get("badge_primary", "Signature")}</span>', unsafe_allow_html=True)
                     with badge_col2:
                         st.markdown(f'<span class="badge-offer">{item.get("badge_secondary", "Special Offer")}</span>', unsafe_allow_html=True)
+
+                    # Display image if provided
+                    if item.get("image_url"):
+                        st.image(item["image_url"], use_container_width=True)
 
                     st.markdown(f"### {item['name']}")
                     st.caption(f"**{item['gender']}'s** • {item['category']}")
@@ -927,7 +918,7 @@ elif selected_nav == "📦 Full Inventory":
     st.header("📦 Full Inventory Impression & Home Scents Request Portal")
     st.markdown("""
     <div class="market-sub-banner">
-        <b>Pricing & Shipping Summary:</b> Every bottle is <b>$30.00</b>. Buy 3 bottles and pick a 4th bottle for free! 
+        <b>Pricing & Shipping Summary:</b> Every bottle is <b>$30.00</b> (60ml Shatter-Proof Precision Polymer). Buy 3 bottles and pick a 4th bottle for free! 
         Enjoy <b>Free Shipping</b> on orders of $60 or more ($5 shipping fee for single $30 orders).
     </div>
     """, unsafe_allow_html=True)
@@ -947,13 +938,6 @@ elif selected_nav == "📦 Full Inventory":
 
     st.subheader("📚 Browse Our Full Inventory List")
     st.write("Check the 'Add to Cart' box next to any item below to add it directly to your shopping bag:")
-
-    full_inv_bottle_selection = st.radio(
-        "Choose Bottle Type for Full Inventory Selections:",
-        ["60ml Shatter-Proof Precision Polymer (Travel Safe)", "50ml Classic Glass Bottle"],
-        horizontal=True,
-        key="full_inv_bottle_choice"
-    )
 
     sub_cat1, sub_cat2, sub_cat3 = st.tabs(["✨ More Men's Scents", "🌸 More Women's Scents", "🏡 Home Scents Collection"])
 
@@ -977,14 +961,11 @@ elif selected_nav == "📦 Full Inventory":
             if not newly_checked.empty:
                 if st.button("🛒 Add Selected Items to My Bag", key=f"btn_bulk_{unique_key}", type="primary", use_container_width=True):
                     added_count = 0
-                    
-                    selected_btype = st.session_state.get("full_inv_bottle_choice", "60ml Shatter-Proof Precision Polymer (Travel Safe)")
-                    btype_code = "polymer" if "Polymer" in selected_btype else "glass"
-                    btype_label = "60ml Shatter-Proof Precision Polymer" if "Polymer" in selected_btype else "50ml Classic Glass Bottle"
+                    btype_label = "60ml Shatter-Proof Precision Polymer"
 
                     for _, row in newly_checked.iterrows():
                         item_name = str(row[target_col]).strip()
-                        custom_cart_id = f"custom_req_{item_name.lower().replace(' ', '_')}_{btype_code}"
+                        custom_cart_id = f"custom_req_{item_name.lower().replace(' ', '_')}_polymer"
                         
                         if custom_cart_id in st.session_state.cart:
                             st.session_state.cart[custom_cart_id] += 1
@@ -1000,9 +981,10 @@ elif selected_nav == "📦 Full Inventory":
                                 "badge_secondary": "Special Request",
                                 "category": f"{btype_label} • Custom Impression / Home Scent",
                                 "price": 30.0,
-                                "edition_type": "Travel" if btype_code == "polymer" else "Standard",
+                                "edition_type": "Precision Polymer",
                                 "bottle_type": btype_label,
-                                "notes": "Custom item requested dynamically via spreadsheet checkbox toggle selector."
+                                "notes": "Custom item requested dynamically via spreadsheet checkbox toggle selector.",
+                                "image_url": DEFAULT_PRODUCT_IMAGE
                             })
                         added_count += 1
                         
@@ -1040,7 +1022,6 @@ elif selected_nav == "📦 Full Inventory":
 
         st.markdown("---")
         qr_item_requests = st.text_area("What impressions or home scents would you like to request? *")
-        qr_bottle_preference = st.radio("Preferred Bottle Type:", ["60ml Shatter-Proof Precision Polymer (Travel Safe)", "50ml Classic Glass Bottle"])
         qr_total_qty = st.number_input("Total Number of Items Requested", min_value=1, value=1)
         qr_payment_method = st.selectbox("Preferred Settlement Method", ["Cash App", "Zelle", "Venmo", "Apple Pay", "Cash POS (In-Person)"])
         qr_notes = st.text_area("Additional Request Notes / Custom Preferences / Home Scent Details")
@@ -1059,7 +1040,7 @@ elif selected_nav == "📦 Full Inventory":
                 qr_ship = 5.0 if qr_sub < 60.0 else 0.0
                 qr_final_total = qr_sub + qr_ship
                 
-                full_request_summary = f"{qr_item_requests} (Bottle Type: {qr_bottle_preference})"
+                full_request_summary = f"{qr_item_requests} (Bottle Type: 60ml Shatter-Proof Precision Polymer)"
 
                 save_order_to_db(
                     name=qr_cust_name,
@@ -1205,23 +1186,12 @@ elif selected_nav == "🛒 Checkout & Invoice":
 
         for item_id, qty in st.session_state.cart.items():
             if str(item_id).startswith("custom_req_"):
-                parts = str(item_id).replace("custom_req_", "").split("_")
-                btype_suffix = parts[-1]
-                raw_item_name = " ".join(parts[:-1]).title()
-                
-                if btype_suffix == "polymer":
-                    detected_bottle = "60ml Shatter-Proof Precision Polymer"
-                elif btype_suffix == "glass":
-                    detected_bottle = "50ml Classic Glass Bottle"
-                else:
-                    raw_item_name = str(item_id).replace("custom_req_", "").replace("_", " ").title()
-                    detected_bottle = "Standard Bottle"
-
+                raw_item_name = str(item_id).replace("custom_req_", "").replace("_polymer", "").replace("_", " ").title()
                 product = {
                     "name": f"Custom Request: {raw_item_name}",
                     "category": "Custom Impression / Home Scent",
                     "price": 30.0,
-                    "bottle_type": detected_bottle
+                    "bottle_type": "60ml Shatter-Proof Precision Polymer"
                 }
             else:
                 try:
@@ -1231,10 +1201,10 @@ elif selected_nav == "🛒 Checkout & Invoice":
                     product = {
                         "name": f"Custom Request: {clean_name}",
                         "category": "Custom Impression / Home Scent",
-                        "bottle_type": "Standard Bottle"
+                        "bottle_type": "60ml Shatter-Proof Precision Polymer"
                     }
 
-            bottle_type_display = product.get("bottle_type", "Standard Bottle")
+            bottle_type_display = product.get("bottle_type", "60ml Shatter-Proof Precision Polymer")
 
             cart_table_data.append({
                 "Product Name": product["name"],
